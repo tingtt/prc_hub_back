@@ -5,6 +5,7 @@ import (
 	"prc_hub_back/domain/model/event"
 )
 
+// Singleton fields
 var (
 	initialized        = false
 	eventRepository    event.EventRepository

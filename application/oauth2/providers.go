@@ -1,6 +1,8 @@
 package oauth2
 
-import "errors"
+import (
+	"errors"
+)
 
 type Provider string
 

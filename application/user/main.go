@@ -5,6 +5,7 @@ import (
 	"prc_hub_back/domain/model/user"
 )
 
+// Singleton fields
 var (
 	initialized = false
 	repository  user.UserRepository

@@ -20,7 +20,6 @@ var (
 func main() {
 	// Init application services
 	user.InitApplication(repositoryUser)
-	oauth2.Init()
 	oauth2.InitApplication(repositoryOAuth2)
 	event.InitApplication(repositoryEvent, repositoryDocument)
 
