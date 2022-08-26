@@ -1,0 +1,25 @@
+package user
+
+import "prc_hub_back/domain/model/user"
+
+type (
+	CreateUserParam user.CreateUserParam
+)
+
+func Create(p CreateUserParam) (_ user.UserWithToken, err error) {
+	if !initialized {
+		err = ErrRepositoryNotInitialized
+		return
+	}
+
+	return user.CreateUser(
+		repository,
+		user.CreateUserParam{
+			Name:           p.Name,
+			Email:          p.Email,
+			Password:       p.Password,
+			TwitterId:      p.TwitterId,
+			GithubUsername: p.GithubUsername,
+		},
+	)
+}
