@@ -11,7 +11,7 @@ import (
 // (GET /events)
 func (s Server) GetEvents(ctx echo.Context, params GetEventsParams) error {
 	// Get jwt claim
-	jcc, err := jwt.CheckProvided(ctx)
+	jcc, err := jwt.Check(ctx)
 	if err != nil {
 		return JSONMessage(ctx, http.StatusUnauthorized, err.Error())
 	}

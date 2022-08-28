@@ -40,7 +40,10 @@ func Start() {
 			return c.Path() == "/users" && c.Request().Method == "POST" ||
 				c.Path() == "/users/oauth2/:oauth_providers/register" && c.Request().Method == "POST" ||
 				c.Path() == "/users/sign_in" && c.Request().Method == "POST" ||
-				c.Path() == "/events" && c.Request().Method == "GET"
+				c.Path() == "/events" && c.Request().Method == "GET" ||
+				c.Path() == "/events/:id" && c.Request().Method == "GET" ||
+				c.Path() == "/events/:id/documents" && c.Request().Method == "GET" ||
+				c.Path() == "/events/:id/documents/:document_id" && c.Request().Method == "GET"
 		},
 	)
 

@@ -11,7 +11,7 @@ import (
 // (GET /events/{id}/documents)
 func (s Server) GetEventsIdDocuments(ctx echo.Context, id Id, params GetEventsIdDocumentsParams) error {
 	// Get jwt claim
-	jcc, err := jwt.CheckProvided(ctx)
+	jcc, err := jwt.Check(ctx)
 	if err != nil {
 		return JSONMessage(ctx, http.StatusUnauthorized, err.Error())
 	}
