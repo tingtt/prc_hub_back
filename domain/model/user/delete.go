@@ -8,15 +8,15 @@ var (
 )
 
 func DeleteUesr(repo UserRepository, id string, requestUser User) error {
-	if requestUser.Id != id && !requestUser.Admin {
-		// Admin権限なし 且つ IDが自分ではない場合は削除不可
-		return ErrUserNotFound
-	}
-
 	// リポジトリから削除対象の`User`を取得
-	u, err := repo.Get(id)
+	u, err := Get(repo, id)
 	if err != nil {
 		return err
+	}
+
+	if !requestUser.Admin && requestUser.Id != id {
+		// Admin権限なし 且つ IDが自分ではない場合は削除不可
+		return ErrUserNotFound
 	}
 
 	if u.Admin {
