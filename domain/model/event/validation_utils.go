@@ -6,15 +6,15 @@ import (
 
 // Errors
 var (
-	ErrEventTitleCannotBeEmpty   = errors.New("Event title cannot be empty")
-	ErrDocumentNameCannotBeEmpty = errors.New("Event document name cannot be empty")
-	ErrUrlCannotBeEmpty          = errors.New("Event document url cannot be empty")
+	ErrValidateEventTitleCannotBeEmpty   = errors.New("Event title cannot be empty")
+	ErrValidateDocumentNameCannotBeEmpty = errors.New("Event document name cannot be empty")
+	ErrValidateUrlCannotBeEmpty          = errors.New("Event document url cannot be empty")
 )
 
 func validateTitle(title string) error {
 	// 空文字チェック
 	if title == "" {
-		return ErrEventTitleCannotBeEmpty
+		return ErrValidateEventTitleCannotBeEmpty
 	}
 	return nil
 }
@@ -22,7 +22,7 @@ func validateTitle(title string) error {
 func validateDocumentName(name string) error {
 	// 空文字チェック
 	if name == "" {
-		return ErrDocumentNameCannotBeEmpty
+		return ErrValidateDocumentNameCannotBeEmpty
 	}
 	return nil
 }
@@ -30,7 +30,7 @@ func validateDocumentName(name string) error {
 func validateUrl(url string) error {
 	// 空文字チェック
 	if url == "" {
-		return ErrUrlCannotBeEmpty
+		return ErrValidateUrlCannotBeEmpty
 	}
 	return nil
 }

@@ -7,6 +7,7 @@ type Event struct {
 	Documents *[]EventDocument `json:"documents,omitempty"`
 	Published bool             `json:"published"`
 	Completed bool             `json:"completed"`
+	UserId    string           `json:"user_id"`
 }
 
 type EventDocument struct {

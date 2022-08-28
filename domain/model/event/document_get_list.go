@@ -7,5 +7,6 @@ type GetDocumentQueryParam struct {
 }
 
 func GetDocumentList(repo Repos, q GetDocumentQueryParam) ([]EventDocument, error) {
+	// TODO: 権限によって表示を変更
 	return repo.Document.GetList(q)
 }

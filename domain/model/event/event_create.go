@@ -1,6 +1,15 @@
 package event
 
-import "prc_hub_back/domain/model/util"
+import (
+	"errors"
+	"prc_hub_back/domain/model/user"
+	"prc_hub_back/domain/model/util"
+)
+
+// Errors
+var (
+	ErrCannotCreateEvent = errors.New("sorry, you cannot create `event`")
+)
 
 type CreateEventParam struct {
 	Name      string  `json:"name"`
@@ -9,17 +18,25 @@ type CreateEventParam struct {
 	Completed bool    `json:"completed"`
 }
 
-func (p CreateEventParam) validate() error {
+func (p CreateEventParam) validate(requestUser user.User) error {
+	// フィールドの検証
 	err := validateTitle(p.Name)
 	if err != nil {
 		return err
 	}
+
+	// 権限の検証
+	if !requestUser.Admin && !requestUser.Manage && !requestUser.PostEventAvailabled {
+		// `Admin`・`Manage`・`PostEventAvailabled`のいずれでもない場合は`Event`作成不可
+		return ErrCannotCreateEvent
+	}
+
 	return nil
 }
 
-func CreateEvent(repo EventRepository, p CreateEventParam) (_ Event, err error) {
+func CreateEvent(repo EventRepository, p CreateEventParam, requestUser user.User) (_ Event, err error) {
 	// バリデーション
-	err = p.validate()
+	err = p.validate(requestUser)
 	if err != nil {
 		return
 	}
@@ -30,5 +47,6 @@ func CreateEvent(repo EventRepository, p CreateEventParam) (_ Event, err error) 
 		Location:  p.Location,
 		Published: p.Published,
 		Completed: p.Completed,
+		UserId:    requestUser.Id,
 	})
 }

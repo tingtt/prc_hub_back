@@ -1,6 +1,15 @@
 package event
 
-import "prc_hub_back/domain/model/util"
+import (
+	"errors"
+	"prc_hub_back/domain/model/user"
+	"prc_hub_back/domain/model/util"
+)
+
+// Errors
+var (
+	ErrCannotUpdateEvent = errors.New("sorry, you cannot update this event")
+)
 
 type UpdateEventParam struct {
 	Name      *string                 `json:"name"`
@@ -9,28 +18,38 @@ type UpdateEventParam struct {
 	Completed *bool                   `json:"completed"`
 }
 
-func (p UpdateEventParam) validate() error {
+func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User) error {
+	// フィールドの検証
 	if p.Name != nil {
 		err := validateTitle(*p.Name)
 		if err != nil {
 			return err
 		}
 	}
+
+	// 権限の検証
+	if !requestUser.Admin && !requestUser.Manage {
+		// Eventを取得
+		e, err := GetEvent(repo, id, requestUser)
+		if err != nil {
+			return err
+		}
+
+		if requestUser.Id != e.UserId {
+			// `Admin`・`Manage`のいずれでもなく`Event.UserId`が自分ではない場合は変更不可
+			return ErrCannotUpdateEvent
+		}
+	}
+
 	return nil
 }
 
-func UpdateEvent(repo EventRepository, id string, p UpdateEventParam) (_ Event, err error) {
-	// 確認
-	_, err = repo.Get(id)
-	if err != nil {
-		return
-	}
-
+func UpdateEvent(repo Repos, id string, p UpdateEventParam, requestUser user.User) (_ Event, err error) {
 	// バリデーション
-	err = p.validate()
+	err = p.validate(repo, id, requestUser)
 	if err != nil {
 		return
 	}
 
-	return repo.Update(id, p)
+	return repo.Event.Update(id, p)
 }

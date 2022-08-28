@@ -1,6 +1,15 @@
 package event
 
-import "prc_hub_back/domain/model/util"
+import (
+	"errors"
+	"prc_hub_back/domain/model/user"
+	"prc_hub_back/domain/model/util"
+)
+
+// Errors
+var (
+	ErrCannotCreateEventDocument = errors.New("sorry, you cannot create document to this event")
+)
 
 type CreateEventDocumentParam struct {
 	EventId string `json:"event_id"`
@@ -8,7 +17,8 @@ type CreateEventDocumentParam struct {
 	Url     string `json:"url"`
 }
 
-func (p CreateEventDocumentParam) validate(repo EventRepository) error {
+func (p CreateEventDocumentParam) validate(repo Repos, requestUser user.User) error {
+	// フィールドの検証
 	err := validateDocumentName(p.Name)
 	if err != nil {
 		return err
@@ -17,15 +27,30 @@ func (p CreateEventDocumentParam) validate(repo EventRepository) error {
 	if err != nil {
 		return err
 	}
-	err = validateEventId(repo, p.EventId)
+	err = validateEventId(repo.Event, p.EventId)
 	if err != nil {
 		return err
 	}
+
+	// 権限の検証
+	if !requestUser.Admin && !requestUser.Manage {
+		// Eventを取得
+		e, err := GetEvent(repo, p.EventId, requestUser)
+		if err != nil {
+			return err
+		}
+
+		if requestUser.Id != e.UserId {
+			// `Admin`・`Manage`のいずれでもなく`Event.UserId`が自分ではない場合は追加不可
+			return ErrCannotCreateEventDocument
+		}
+	}
+
 	return nil
 }
 
-func CreateEventDocument(repo Repos, p CreateEventDocumentParam) (_ EventDocument, err error) {
-	err = p.validate(repo.Event)
+func CreateEventDocument(repo Repos, p CreateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
+	err = p.validate(repo, requestUser)
 	if err != nil {
 		return
 	}
