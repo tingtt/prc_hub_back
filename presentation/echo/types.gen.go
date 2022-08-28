@@ -31,8 +31,8 @@ type CreateEventBody struct {
 	Title                      string  `json:"title"`
 }
 
-// CreateEventDocumentsBody defines model for CreateEventDocumentsBody.
-type CreateEventDocumentsBody = []struct {
+// CreateEventDocumentBody defines model for CreateEventDocumentBody.
+type CreateEventDocumentBody struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
 }
@@ -101,6 +101,12 @@ type UpdateEventBody struct {
 	Title                      *string `json:"title,omitempty"`
 }
 
+// UpdateEventDocumentBody defines model for UpdateEventDocumentBody.
+type UpdateEventDocumentBody struct {
+	Name *string `json:"name,omitempty"`
+	Url  *string `json:"url,omitempty"`
+}
+
 // UpdateUserBody defines model for UpdateUserBody.
 type UpdateUserBody struct {
 	Admin               *bool   `json:"admin,omitempty"`
@@ -134,6 +140,9 @@ type UserWithToken struct {
 	Token               string              `json:"token"`
 	TwitterId           *string             `json:"twitter_id,omitempty"`
 }
+
+// DocumentId defines model for document_id.
+type DocumentId = string
 
 // Id defines model for id.
 type Id = string
@@ -194,10 +203,10 @@ type PostEventsJSONRequestBody = CreateEventBody
 type PatchEventsIdJSONRequestBody = UpdateEventBody
 
 // PostEventsIdDocumentsJSONRequestBody defines body for PostEventsIdDocuments for application/json ContentType.
-type PostEventsIdDocumentsJSONRequestBody = CreateEventDocumentsBody
+type PostEventsIdDocumentsJSONRequestBody = CreateEventDocumentBody
 
-// PutEventsIdDocumentsJSONRequestBody defines body for PutEventsIdDocuments for application/json ContentType.
-type PutEventsIdDocumentsJSONRequestBody = CreateEventDocumentsBody
+// PatchEventsIdDocumentsDocumentIdJSONRequestBody defines body for PatchEventsIdDocumentsDocumentId for application/json ContentType.
+type PatchEventsIdDocumentsDocumentIdJSONRequestBody = UpdateEventDocumentBody
 
 // PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
 type PostUsersJSONRequestBody = CreateUserBody

@@ -41,8 +41,6 @@ paths:
                 $ref: "#/components/schemas/UserWithToken"
         400:
           description: Invalid request
-        415:
-          description: Unsupported media type
         422:
           description: Unprocessable entity
         500:
@@ -55,8 +53,12 @@ paths:
           description: Deleted
         401:
           description: Unauthorized
+        403:
+          description: Forbidden
         404:
           description: Not found
+        405:
+          description: Method not allowed
         500:
           description: Internal server error
 
@@ -73,10 +75,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Token"
+        400:
+          description: Invalid request
         401:
           description: Unauthorized
-        415:
-          description: Unsupported media type
+        405:
+          description: Method not allowed
         422:
           description: Unprocessable entity
         500:
@@ -96,8 +100,12 @@ paths:
                 $ref: "#/components/schemas/User"
         401:
           description: Unauthorized
+        403:
+          description: Forbidden
         404:
           description: Not found
+        500:
+          description: Internal server error
     patch:
       summary: ユーザー情報変更
       parameters:
@@ -117,8 +125,6 @@ paths:
           description: Unauthorized
         404:
           description: Not found
-        415:
-          description: Unsupported media type
         422:
           description: Unprocessable entity
         500:
@@ -135,6 +141,8 @@ paths:
           description: Unauthorized
         404:
           description: Not found
+        405:
+          description: Method not allowed
         500:
           description: Internal server error
 
@@ -246,8 +254,6 @@ paths:
                 $ref: "#/components/schemas/Event"
         400:
           description: Invalid request
-        415:
-          description: Unsupported media type
         422:
           description: Unprocessable entity
         500:
@@ -289,8 +295,6 @@ paths:
           description: Unauthorized
         404:
           description: Not found
-        415:
-          description: Unsupported media type
         422:
           description: Unprocessable entity
         500:
@@ -326,6 +330,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/EventDocument"
+        404:
+          description: Not found
         500:
           description: Internal server error
     post:
@@ -333,7 +339,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/id"
       requestBody:
-        $ref: "#/components/requestBodies/CreateEventDocumentsBody"
+        $ref: "#/components/requestBodies/CreateEventDocumentBody"
       responses:
         201:
           description: Created
@@ -345,33 +351,69 @@ paths:
                   $ref: "#/components/schemas/EventDocument"
         400:
           description: Invalid request
-        415:
-          description: Unsupported media type
+        404:
+          description: Not found
         422:
           description: Unprocessable entity
         500:
           description: Internal server error
-    put:
-      summary: イベント資料変更
+
+  /events/{id}/documents/{document_id}:
+    get:
+      summary: イベント資料
       parameters:
         - $ref: "#/components/parameters/id"
-      requestBody:
-        $ref: "#/components/requestBodies/CreateEventDocumentsBody"
+        - $ref: "#/components/parameters/document_id"
+      security: []
       responses:
         200:
-          description: Replaced
+          description: Success
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/EventDocument"
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+    patch:
+      summary: イベント資料変更
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/document_id"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateEventDocumentBody"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventDocument"
         400:
           description: Invalid request
-        415:
-          description: Unsupported media type
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
         422:
           description: Unprocessable entity
+        500:
+          description: Internal server error
+    delete:
+      summary: イベント資料削除
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/document_id"
+      responses:
+        204:
+          description: Deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
         500:
           description: Internal server error
 
@@ -663,21 +705,30 @@ components:
         - name
         - url
 
-    CreateEventDocumentsBody:
-      type: array
-      items:
-        type: object
-        properties:
-          name:
-            type: string
-            example: スライド
-          url:
-            type: string
-            format: uri
-            example: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
-        required:
-          - name
-          - url
+    CreateEventDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: スライド
+        url:
+          type: string
+          format: uri
+          example: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
+      required:
+        - name
+        - url
+
+    UpdateEventDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: スライド
+        url:
+          type: string
+          format: uri
+          example: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
 
   requestBodies:
     LoginBody:
@@ -715,15 +766,27 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateEventBody"
-    CreateEventDocumentsBody:
+    CreateEventDocumentBody:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/CreateEventDocumentsBody"
+            $ref: "#/components/schemas/CreateEventDocumentBody"
+    UpdateEventDocumentBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateEventDocumentBody"
 
   parameters:
     id:
       name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1
+    document_id:
+      name: document_id
       in: path
       required: true
       schema:

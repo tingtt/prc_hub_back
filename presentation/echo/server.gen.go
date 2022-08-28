@@ -34,9 +34,15 @@ type ServerInterface interface {
 	// イベント資料登録
 	// (POST /events/{id}/documents)
 	PostEventsIdDocuments(ctx echo.Context, id Id) error
+	// イベント資料削除
+	// (DELETE /events/{id}/documents/{document_id})
+	DeleteEventsIdDocumentsDocumentId(ctx echo.Context, id Id, documentId DocumentId) error
+	// イベント資料
+	// (GET /events/{id}/documents/{document_id})
+	GetEventsIdDocumentsDocumentId(ctx echo.Context, id Id, documentId DocumentId) error
 	// イベント資料変更
-	// (PUT /events/{id}/documents)
-	PutEventsIdDocuments(ctx echo.Context, id Id) error
+	// (PATCH /events/{id}/documents/{document_id})
+	PatchEventsIdDocumentsDocumentId(ctx echo.Context, id Id, documentId DocumentId) error
 	// イベント情報・アンケートURLの送信
 	// (POST /events/{id}/webhook/line_notify)
 	PostEventsIdWebhookLineNotify(ctx echo.Context, id Id, params PostEventsIdWebhookLineNotifyParams) error
@@ -229,8 +235,8 @@ func (w *ServerInterfaceWrapper) PostEventsIdDocuments(ctx echo.Context) error {
 	return err
 }
 
-// PutEventsIdDocuments converts echo context to params.
-func (w *ServerInterfaceWrapper) PutEventsIdDocuments(ctx echo.Context) error {
+// DeleteEventsIdDocumentsDocumentId converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteEventsIdDocumentsDocumentId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "id" -------------
 	var id Id
@@ -240,10 +246,68 @@ func (w *ServerInterfaceWrapper) PutEventsIdDocuments(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
 
+	// ------------- Path parameter "document_id" -------------
+	var documentId DocumentId
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "document_id", runtime.ParamLocationPath, ctx.Param("document_id"), &documentId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter document_id: %s", err))
+	}
+
 	ctx.Set(BearerScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PutEventsIdDocuments(ctx, id)
+	err = w.Handler.DeleteEventsIdDocumentsDocumentId(ctx, id, documentId)
+	return err
+}
+
+// GetEventsIdDocumentsDocumentId converts echo context to params.
+func (w *ServerInterfaceWrapper) GetEventsIdDocumentsDocumentId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id Id
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// ------------- Path parameter "document_id" -------------
+	var documentId DocumentId
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "document_id", runtime.ParamLocationPath, ctx.Param("document_id"), &documentId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter document_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetEventsIdDocumentsDocumentId(ctx, id, documentId)
+	return err
+}
+
+// PatchEventsIdDocumentsDocumentId converts echo context to params.
+func (w *ServerInterfaceWrapper) PatchEventsIdDocumentsDocumentId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id Id
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// ------------- Path parameter "document_id" -------------
+	var documentId DocumentId
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "document_id", runtime.ParamLocationPath, ctx.Param("document_id"), &documentId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter document_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{""})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PatchEventsIdDocumentsDocumentId(ctx, id, documentId)
 	return err
 }
 
@@ -455,7 +519,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.PATCH(baseURL+"/events/:id", wrapper.PatchEventsId)
 	router.GET(baseURL+"/events/:id/documents", wrapper.GetEventsIdDocuments)
 	router.POST(baseURL+"/events/:id/documents", wrapper.PostEventsIdDocuments)
-	router.PUT(baseURL+"/events/:id/documents", wrapper.PutEventsIdDocuments)
+	router.DELETE(baseURL+"/events/:id/documents/:document_id", wrapper.DeleteEventsIdDocumentsDocumentId)
+	router.GET(baseURL+"/events/:id/documents/:document_id", wrapper.GetEventsIdDocumentsDocumentId)
+	router.PATCH(baseURL+"/events/:id/documents/:document_id", wrapper.PatchEventsIdDocumentsDocumentId)
 	router.POST(baseURL+"/events/:id/webhook/line_notify", wrapper.PostEventsIdWebhookLineNotify)
 	router.DELETE(baseURL+"/users", wrapper.DeleteUsers)
 	router.GET(baseURL+"/users", wrapper.GetUsers)
