@@ -16,8 +16,14 @@ func (s Server) GetUsers(ctx echo.Context) error {
 		return JSONMessage(ctx, http.StatusUnauthorized, err.Error())
 	}
 
+	// Bind query
+	query := new(user.GetUserListQuery)
+	if err := ctx.Bind(query); err != nil {
+		return JSONMessage(ctx, http.StatusBadRequest, err.Error())
+	}
+
 	// Get users
-	u, err := user.GetList()
+	u, err := user.GetList(*query)
 	if err != nil {
 		return JSONMessage(ctx, user.ErrToCode(err), err.Error())
 	}
