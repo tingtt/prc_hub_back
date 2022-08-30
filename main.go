@@ -14,6 +14,11 @@ import (
 
 // コマンドライン引数 / 環境変数
 var (
+	port          = flag_with_env.Uint("port", "PORT", 1323, "Server port")
+	logLevel      = flag_with_env.Uint("log-level", "LOG_LEVEL", 2, "Log level (1: 'DEBUG', 2: 'INFO', 3: 'WARN', 4: 'ERROR', 5: 'OFF', 6: 'PANIC', 7: 'FATAL'")
+	gzipLevel     = flag_with_env.Uint("gzip-level", "GZIP_LEVEL", 6, "Gzip compression level")
+	issuer        = flag_with_env.String("jwt-issuer", "JWT_ISSUER", "prc_hub-api", "JWT issuer")
+	secret        = flag_with_env.String("jwt-secret", "JWT_SECRET", "", "JWT secret")
 	adminEmail    = flag_with_env.String("admin-email", "ADMIN_EMAIL", "", "Admin user email")
 	adminPassword = flag_with_env.String("admin-password", "ADMIN_PASSWORD", "", "Admin user password")
 )
@@ -41,5 +46,5 @@ func main() {
 	users, _ := user.GetList(user.GetUserListQuery{})
 	fmt.Printf("users: %v\n", users)
 
-	echo.Start()
+	echo.Start(*port, *logLevel, *gzipLevel, *issuer, *secret)
 }

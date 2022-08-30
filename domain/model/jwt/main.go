@@ -2,39 +2,12 @@ package jwt
 
 import (
 	"errors"
-	"prc_hub_back/domain/model/flag_with_env"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
-
-// コマンドライン引数 / 環境変数
-var (
-	issuer = flag_with_env.String("jwt-issuer", "JWT_ISSUER", "prc_hub-api", "JWT issuer")
-	secret = flag_with_env.String("jwt-secret", "JWT_SECRET", "", "JWT secret")
-)
-
-// JWTミドルウェアの初期化
-func Init(e *echo.Echo) {
-	flag_with_env.Parse()
-	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		Claims:     &jwtCustumClaims{},
-		SigningKey: []byte(*secret),
-	}))
-}
-
-// JWTミドルウェアの初期化
-func InitWithSkipper(e *echo.Echo, skipper func(c echo.Context) bool) {
-	flag_with_env.Parse()
-	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		Claims:     &jwtCustumClaims{},
-		SigningKey: []byte(*secret),
-		Skipper:    skipper,
-	}))
-}
 
 // エラー
 var (
@@ -67,20 +40,20 @@ func GenerateToken(p GenerateTokenParam) (token string, err error) {
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			IssuedAt:  time.Now().Unix(),
-			Issuer:    *issuer,
+			Issuer:    *jwtIssuer,
 		},
 	}
 
 	// トークンを生成
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return newToken.SignedString([]byte(*secret))
+	return newToken.SignedString([]byte(*jwtSecret))
 }
 
 // トークンの検証
 func verify(token *jwt.Token) (claims *jwtCustumClaims, err error) {
 	claims = token.Claims.(*jwtCustumClaims)
 
-	if !claims.VerifyIssuer(*issuer, true) {
+	if !claims.VerifyIssuer(*jwtIssuer, true) {
 		// 不正なトークン
 		err = ErrTokenInvalid
 		return
@@ -114,7 +87,7 @@ func Check(ctx echo.Context) (claims *jwtCustumClaims, err error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, ErrUnexpectedSigningMethod
 				}
-				return []byte(*secret), nil
+				return []byte(*jwtSecret), nil
 			},
 		)
 		if err != nil {

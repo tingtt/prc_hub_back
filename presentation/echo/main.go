@@ -2,7 +2,6 @@ package echo
 
 import (
 	"fmt"
-	"prc_hub_back/domain/model/flag_with_env"
 	"prc_hub_back/domain/model/jwt"
 
 	"github.com/labstack/echo/v4"
@@ -10,31 +9,23 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-// コマンドライン引数 / 環境変数
-var (
-	port      = flag_with_env.Uint("port", "PORT", 1323, "Server port")
-	logLevel  = flag_with_env.Uint("log-level", "LOG_LEVEL", 2, "Log level (1: 'DEBUG', 2: 'INFO', 3: 'WARN', 4: 'ERROR', 5: 'OFF', 6: 'PANIC', 7: 'FATAL'")
-	gzipLevel = flag_with_env.Uint("gzip-level", "GZIP_LEVEL", 6, "Gzip compression level")
-)
-
-func Start() {
-	// コマンドライン引数 / 環境変数 の取得
-	flag_with_env.Parse()
-
+func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret string) {
 	// echoサーバーのインスタンス生成
 	e := echo.New()
 
 	// Gzipの圧縮レベル設定
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-		Level: int(*gzipLevel),
+		Level: int(gzipLevel),
 	}))
 
 	// ログレベルの設定
-	e.Logger.SetLevel(log.Lvl(*logLevel))
+	e.Logger.SetLevel(log.Lvl(logLevel))
 
 	// JWT
 	jwt.InitWithSkipper(
 		e,
+		jwtIssuer,
+		jwtSecret,
 		func(c echo.Context) bool {
 			// 公開エンドポイントのJWT認証をスキップ
 			return c.Path() == "/users" && c.Request().Method == "POST" ||
@@ -51,5 +42,5 @@ func Start() {
 	RegisterHandlers(e, Server{})
 
 	// echoサーバーの起動
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", *port)))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }
