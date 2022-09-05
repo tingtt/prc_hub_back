@@ -2,6 +2,8 @@ package user
 
 import (
 	"prc_hub_back/domain/model/util"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func SaveAdmin(repo UserRepository, email string, password string) error {
@@ -23,7 +25,14 @@ func SaveAdmin(repo UserRepository, email string, password string) error {
 			return err
 		} else if !verify {
 			// `Password`が不一致
-			newPassword = &password
+			// パスワードをハッシュ化
+			hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+			if err != nil {
+				return err
+			}
+			tmpPasswd := string(hashed)
+			// 新規パスワード
+			newPassword = &tmpPasswd
 		}
 
 		// `User`更新
@@ -36,12 +45,19 @@ func SaveAdmin(repo UserRepository, email string, password string) error {
 		}
 	} else {
 		// `Admin`の`User`が未登録
+
+		// パスワードをハッシュ化
+		hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+		if err != nil {
+			return err
+		}
+
 		// `User`追加
-		_, err := repo.Add(User{
+		_, err = repo.Add(User{
 			Id:                  util.UUID(),
 			Name:                "admin",
 			Email:               email,
-			Password:            password,
+			Password:            string(hashed),
 			PostEventAvailabled: true,
 			Manage:              true,
 			Admin:               true,
