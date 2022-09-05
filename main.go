@@ -38,13 +38,10 @@ func main() {
 
 	// Migrate admin user
 	fmt.Printf("adminEmail: %v\n", *adminEmail)
-	fmt.Printf("adminPassword: %v\n", *adminPassword)
 	err := user.SaveAdmin(*adminEmail, *adminPassword)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 	}
-	users, _ := user.GetList(user.GetUserListQuery{})
-	fmt.Printf("users: %v\n", users)
 
 	echo.Start(*port, *logLevel, *gzipLevel, *issuer, *secret)
 }
