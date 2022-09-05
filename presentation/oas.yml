@@ -1,5 +1,4 @@
 openapi: 3.0.0
-servers: []
 info:
   description: ""
   version: "1.0.0"
@@ -8,6 +7,9 @@ info:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags: []
+
+servers:
+  - url: "http://localhost:1323"
 
 security:
   - Bearer: []
