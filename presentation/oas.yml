@@ -214,20 +214,20 @@ paths:
                 example:
                   - id: 1
                     title: ITシステムの構造
+                    description: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
                     location: "2302"
                     published: true
                     completed: true
-                    auto_notify_documents_enabled: true
                     documents:
                       - id: 1
                         name: スライド
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
                   - id: 2
                     title: Git/GitHubハンズオン
+                    description: エンジニア必須スキルのGitとGitHubのハンズオンを行います。\nGit/GitHubはITシステムを開発する上でよく利用する技術・サービスです。
                     location: "2302"
                     published: true
                     completed: true
-                    auto_notify_documents_enabled: true
                     documents:
                       - id: 1
                         name: スライド
@@ -237,10 +237,10 @@ paths:
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/DOCUMENT.md
                   - id: 3
                     title: Webサーバハンズオン
+                    description: 4年生が実際に開発しているWebサイトを題材にハンズオンを行います。\n題材ははNext.js(React.js/node.js)というWebサイトなどを作るJavaScriptのフレームワークを利用しています。
                     location: "2302"
                     published: true
                     completed: false
-                    auto_notify_documents_enabled: true
         500:
           description: Internal server error
     post:
@@ -622,6 +622,9 @@ components:
         title:
           type: string
           example: ITシステムの構造
+        description:
+          type: string
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
         location:
           type: string
           example: "2302"
@@ -631,11 +634,6 @@ components:
         completed:
           type: boolean
           example: false
-        auto_notify_documents_enabled:
-          type: boolean
-          example: true
-          description: |
-            `true`の場合`event`情報更新後`completed: true`かつ`documents`がある場合にLINE notifyにリクエスト
         documents:
           type: array
           items:
@@ -645,7 +643,6 @@ components:
         - title
         - published
         - completed
-        - auto_notify_documents_enabled
 
     CreateEventBody:
       type: object
@@ -653,6 +650,9 @@ components:
         title:
           type: string
           example: ITシステムの構造
+        description:
+          type: string
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
         location:
           type: string
           example: "2302"
@@ -664,10 +664,6 @@ components:
           type: boolean
           default: false
           example: false
-        auto_notify_documents_enabled:
-          type: boolean
-          default: false
-          example: true
       required:
         - title
 
@@ -677,6 +673,9 @@ components:
         title:
           type: string
           example: ITシステムの構造
+        description:
+          type: string
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
         location:
           type: string
           example: "2302"
@@ -684,9 +683,6 @@ components:
           type: boolean
           example: true
         completed:
-          type: boolean
-          example: true
-        auto_notify_documents_enabled:
           type: boolean
           example: true
 

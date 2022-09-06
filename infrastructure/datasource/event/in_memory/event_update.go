@@ -11,6 +11,13 @@ func (r RepositoryEvent) Update(id string, p event.UpdateEventParam) (_ event.Ev
 	if p.Name != nil {
 		e.Name = *p.Name
 	}
+	if p.Description.KeyExists() {
+		if p.Description.IsNull() {
+			e.Description = nil
+		} else {
+			e.Description = *p.Description.Value
+		}
+	}
 	if p.Location.KeyExists() {
 		if p.Location.IsNull() {
 			e.Location = nil

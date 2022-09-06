@@ -12,10 +12,11 @@ var (
 )
 
 type UpdateEventParam struct {
-	Name      *string                 `json:"name"`
-	Location  util.NullableJSONString `json:"location,omitempty"`
-	Published *bool                   `json:"published"`
-	Completed *bool                   `json:"completed"`
+	Name        *string                 `json:"name"`
+	Description util.NullableJSONString `json:"description,omitempty"`
+	Location    util.NullableJSONString `json:"location,omitempty"`
+	Published   *bool                   `json:"published"`
+	Completed   *bool                   `json:"completed"`
 }
 
 func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User) error {

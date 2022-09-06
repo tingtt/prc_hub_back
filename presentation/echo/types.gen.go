@@ -24,11 +24,11 @@ const (
 
 // CreateEventBody defines model for CreateEventBody.
 type CreateEventBody struct {
-	AutoNotifyDocumentsEnabled *bool   `json:"auto_notify_documents_enabled,omitempty"`
-	Completed                  *bool   `json:"completed,omitempty"`
-	Location                   *string `json:"location,omitempty"`
-	Published                  *bool   `json:"published,omitempty"`
-	Title                      string  `json:"title"`
+	Completed   *bool   `json:"completed,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Location    *string `json:"location,omitempty"`
+	Published   *bool   `json:"published,omitempty"`
+	Title       string  `json:"title"`
 }
 
 // CreateEventDocumentBody defines model for CreateEventDocumentBody.
@@ -57,14 +57,13 @@ type CreateUserOverOauth2Body struct {
 
 // Event defines model for Event.
 type Event struct {
-	// `true`の場合`event`情報更新後`completed: true`かつ`documents`がある場合にLINE notifyにリクエスト
-	AutoNotifyDocumentsEnabled bool             `json:"auto_notify_documents_enabled"`
-	Completed                  bool             `json:"completed"`
-	Documents                  *[]EventDocument `json:"documents,omitempty"`
-	Id                         string           `json:"id"`
-	Location                   *string          `json:"location,omitempty"`
-	Published                  bool             `json:"published"`
-	Title                      string           `json:"title"`
+	Completed   bool             `json:"completed"`
+	Description *string          `json:"description,omitempty"`
+	Documents   *[]EventDocument `json:"documents,omitempty"`
+	Id          string           `json:"id"`
+	Location    *string          `json:"location,omitempty"`
+	Published   bool             `json:"published"`
+	Title       string           `json:"title"`
 }
 
 // EventDocument defines model for EventDocument.
@@ -94,11 +93,11 @@ type Token struct {
 
 // UpdateEventBody defines model for UpdateEventBody.
 type UpdateEventBody struct {
-	AutoNotifyDocumentsEnabled *bool   `json:"auto_notify_documents_enabled,omitempty"`
-	Completed                  *bool   `json:"completed,omitempty"`
-	Location                   *string `json:"location,omitempty"`
-	Published                  *bool   `json:"published,omitempty"`
-	Title                      *string `json:"title,omitempty"`
+	Completed   *bool   `json:"completed,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Location    *string `json:"location,omitempty"`
+	Published   *bool   `json:"published,omitempty"`
+	Title       *string `json:"title,omitempty"`
 }
 
 // UpdateEventDocumentBody defines model for UpdateEventDocumentBody.
