@@ -1,6 +1,9 @@
 package util
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type NullableJSONString struct {
 	Value **string
@@ -64,4 +67,15 @@ func (n NullableJSONBool) KeyExists() bool {
 
 func (n NullableJSONBool) IsNull() bool {
 	return n.KeyExists() && *n.Value == nil
+}
+
+type RFC3339Time time.Time
+
+func (r *RFC3339Time) UnmarshalJSON(data []byte) error {
+	t, err := time.Parse(time.RFC3339, string(data))
+	if err != nil {
+		return err
+	}
+	*r = RFC3339Time(t)
+	return nil
 }

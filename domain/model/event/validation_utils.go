@@ -2,13 +2,16 @@ package event
 
 import (
 	"errors"
+	"time"
 )
 
 // Errors
 var (
-	ErrValidateEventTitleCannotBeEmpty   = errors.New("Event title cannot be empty")
-	ErrValidateDocumentNameCannotBeEmpty = errors.New("Event document name cannot be empty")
-	ErrValidateUrlCannotBeEmpty          = errors.New("Event document url cannot be empty")
+	ErrValidateEventTitleCannotBeEmpty         = errors.New("Event title cannot be empty")
+	ErrValidateDocumentNameCannotBeEmpty       = errors.New("Event document name cannot be empty")
+	ErrValidateUrlCannotBeEmpty                = errors.New("Event document url cannot be empty")
+	ErrValidateEventDatetimesCannotBeEmpty     = errors.New("Event datetime cannot be empty")
+	ErrValidateEventDatetimeStartMustBeforeEnd = errors.New("Event start datetime must be before end datetime")
 )
 
 func validateTitle(title string) error {
@@ -38,4 +41,11 @@ func validateUrl(url string) error {
 func validateEventId(repo EventRepository, id string) error {
 	_, err := repo.Get(id)
 	return err
+}
+
+func validateEventDatetime(start time.Time, end time.Time) error {
+	if !start.Before(end) {
+		return ErrValidateEventDatetimeStartMustBeforeEnd
+	}
+	return nil
 }

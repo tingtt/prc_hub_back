@@ -19,22 +19,40 @@ var (
 	ErrCannotDeleteEventDocument = event.ErrCannotDeleteEventDocument
 
 	// 422
-	ErrValidateEventTitleCannotBeEmpty   = event.ErrValidateEventTitleCannotBeEmpty
-	ErrValidateDocumentNameCannotBeEmpty = event.ErrValidateDocumentNameCannotBeEmpty
-	ErrValidateUrlCannotBeEmpty          = event.ErrValidateUrlCannotBeEmpty
+	ErrValidateEventTitleCannotBeEmpty         = event.ErrValidateEventTitleCannotBeEmpty
+	ErrValidateDocumentNameCannotBeEmpty       = event.ErrValidateDocumentNameCannotBeEmpty
+	ErrValidateUrlCannotBeEmpty                = event.ErrValidateUrlCannotBeEmpty
+	ErrValidateEventDatetimesCannotBeEmpty     = event.ErrValidateEventDatetimesCannotBeEmpty
+	ErrValidateEventDatetimeStartMustBeforeEnd = event.ErrValidateEventDatetimeStartMustBeforeEnd
+
+	// 400
+	ErrNoUpdates = event.ErrNoUpdates
 )
 
 func ErrToCode(e error) (code int) {
 	switch e {
-	case ErrEventNotFound, ErrEventDocumentNotFound:
+	case ErrEventNotFound,
+		ErrEventDocumentNotFound:
 		// 404
 		return http.StatusNotFound
-	case ErrCannotCreateEvent, ErrCannotUpdateEvent, ErrCannotDeleteEvent, ErrCannotCreateEventDocument, ErrCannotUpdateEventDocument, ErrCannotDeleteEventDocument:
+	case ErrCannotCreateEvent,
+		ErrCannotUpdateEvent,
+		ErrCannotDeleteEvent,
+		ErrCannotCreateEventDocument,
+		ErrCannotUpdateEventDocument,
+		ErrCannotDeleteEventDocument:
 		// 403
 		return http.StatusForbidden
-	case ErrValidateEventTitleCannotBeEmpty, ErrValidateDocumentNameCannotBeEmpty, ErrValidateUrlCannotBeEmpty:
+	case ErrValidateEventTitleCannotBeEmpty,
+		ErrValidateDocumentNameCannotBeEmpty,
+		ErrValidateUrlCannotBeEmpty,
+		ErrValidateEventDatetimesCannotBeEmpty,
+		ErrValidateEventDatetimeStartMustBeforeEnd:
 		// 422
 		return http.StatusUnprocessableEntity
+	case ErrNoUpdates:
+		// 400
+		return http.StatusBadRequest
 	default:
 		// 500
 		return http.StatusInternalServerError

@@ -12,19 +12,43 @@ var (
 )
 
 type UpdateEventParam struct {
-	Name        *string                 `json:"name"`
-	Description util.NullableJSONString `json:"description,omitempty"`
-	Location    util.NullableJSONString `json:"location,omitempty"`
-	Published   *bool                   `json:"published"`
-	Completed   *bool                   `json:"completed"`
+	Name        *string                     `json:"name,omitempty"`
+	Description util.NullableJSONString     `json:"description,omitempty"`
+	Location    util.NullableJSONString     `json:"location,omitempty"`
+	Datetimes   *[]CreateEventDatetimeParam `json:"datetimes,omitempty"`
+	Published   *bool                       `json:"published,omitempty"`
+	Completed   *bool                       `json:"completed,omitempty"`
 }
 
 func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User) error {
-	// フィールドの検証
+	/**
+	 * フィールドの検証
+	**/
+	if p.Name == nil &&
+		p.Description.KeyExists() &&
+		p.Location.KeyExists() &&
+		p.Datetimes == nil &&
+		p.Published == nil &&
+		p.Completed == nil {
+		return ErrNoUpdates
+	}
+	// `Name`
 	if p.Name != nil {
 		err := validateTitle(*p.Name)
 		if err != nil {
 			return err
+		}
+	}
+	// `Datetimes`
+	if p.Datetimes != nil {
+		if len(*p.Datetimes) == 0 {
+			return ErrValidateEventDatetimesCannotBeEmpty
+		}
+		for _, d := range *p.Datetimes {
+			err := d.validate()
+			if err != nil {
+				return err
+			}
 		}
 	}
 

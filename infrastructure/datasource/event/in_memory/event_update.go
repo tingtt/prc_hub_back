@@ -1,6 +1,9 @@
 package event_inmemory
 
-import "prc_hub_back/domain/model/event"
+import (
+	"prc_hub_back/domain/model/event"
+	"time"
+)
 
 func (r RepositoryEvent) Update(id string, p event.UpdateEventParam) (_ event.Event, err error) {
 	e, err := r.Get(id)
@@ -23,6 +26,14 @@ func (r RepositoryEvent) Update(id string, p event.UpdateEventParam) (_ event.Ev
 			e.Location = nil
 		} else {
 			e.Location = *p.Location.Value
+		}
+	}
+	if p.Datetimes != nil {
+		for _, d := range *p.Datetimes {
+			e.Datetimes = append(e.Datetimes, event.EventDatetime{
+				Start: time.Time(d.Start),
+				End:   time.Time(d.End),
+			})
 		}
 	}
 	if p.Published != nil {

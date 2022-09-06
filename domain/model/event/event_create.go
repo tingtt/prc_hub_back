@@ -4,6 +4,7 @@ import (
 	"errors"
 	"prc_hub_back/domain/model/user"
 	"prc_hub_back/domain/model/util"
+	"time"
 )
 
 // Errors
@@ -12,18 +13,46 @@ var (
 )
 
 type CreateEventParam struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
-	Location    *string `json:"location,omitempty"`
-	Published   bool    `json:"published"`
-	Completed   bool    `json:"completed"`
+	Name        string                     `json:"name"`
+	Description *string                    `json:"description,omitempty"`
+	Datetimes   []CreateEventDatetimeParam `json:"datetimes"`
+	Location    *string                    `json:"location,omitempty"`
+	Published   bool                       `json:"published"`
+	Completed   bool                       `json:"completed"`
+}
+
+type CreateEventDatetimeParam struct {
+	Start util.RFC3339Time `json:"start"`
+	End   util.RFC3339Time `json:"end"`
+}
+
+func (p CreateEventDatetimeParam) validate() error {
+	// フィールドの検証
+	err := validateEventDatetime(time.Time(p.Start), time.Time(p.End))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p CreateEventParam) validate(requestUser user.User) error {
-	// フィールドの検証
+	/**
+	 * フィールドの検証
+	**/
+	// `Name`
 	err := validateTitle(p.Name)
 	if err != nil {
 		return err
+	}
+	// `Datetimes`
+	if len(p.Datetimes) == 0 {
+		return ErrValidateDocumentNameCannotBeEmpty
+	}
+	for _, d := range p.Datetimes {
+		err = d.validate()
+		if err != nil {
+			return err
+		}
 	}
 
 	// 権限の検証
@@ -42,11 +71,20 @@ func CreateEvent(repo EventRepository, p CreateEventParam, requestUser user.User
 		return
 	}
 
+	var datetimes []EventDatetime
+	for _, d := range p.Datetimes {
+		datetimes = append(datetimes, EventDatetime{
+			Start: time.Time(d.Start),
+			End:   time.Time(d.End),
+		})
+	}
+
 	return repo.Add(Event{
 		Id:          util.UUID(),
 		Name:        p.Name,
 		Description: p.Description,
 		Location:    p.Location,
+		Datetimes:   datetimes,
 		Published:   p.Published,
 		Completed:   p.Completed,
 		UserId:      requestUser.Id,

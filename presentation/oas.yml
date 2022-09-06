@@ -216,6 +216,13 @@ paths:
                     title: ITシステムの構造
                     description: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
                     location: "2302"
+                    datetimes:
+                      - start: 2022-05-16T17:15:00+0900
+                        end: 2022-05-16T18:00:00+0900
+                      - start: 2022-05-17T17:15:00+0900
+                        end: 2022-05-17T18:00:00+0900
+                      - start: 2022-05-20T18:45:00+0900
+                        end: 2022-05-20T19:30:00+0900
                     published: true
                     completed: true
                     documents:
@@ -226,6 +233,13 @@ paths:
                     title: Git/GitHubハンズオン
                     description: エンジニア必須スキルのGitとGitHubのハンズオンを行います。\nGit/GitHubはITシステムを開発する上でよく利用する技術・サービスです。
                     location: "2302"
+                    datetimes:
+                      - start: 2022-05-23T17:15:00+0900
+                        end: 2022-05-23T18:00:00+0900
+                      - start: 2022-05-24T17:15:00+0900
+                        end: 2022-05-24T18:00:00+0900
+                      - start: 2022-05-27T18:45:00+0900
+                        end: 2022-05-27T19:30:00+0900
                     published: true
                     completed: true
                     documents:
@@ -239,6 +253,13 @@ paths:
                     title: Webサーバハンズオン
                     description: 4年生が実際に開発しているWebサイトを題材にハンズオンを行います。\n題材ははNext.js(React.js/node.js)というWebサイトなどを作るJavaScriptのフレームワークを利用しています。
                     location: "2302"
+                    datetimes:
+                      - start: 2022-06-17T18:45:00+0900
+                        end: 2022-06-17T19:30:00+0900
+                      - start: 2022-06-20T17:15:00+0900
+                        end: 2022-06-20T18:00:00+0900
+                      - start: 2022-06-21T17:15:00+0900
+                        end: 2022-06-21T18:00:00+0900
                     published: true
                     completed: false
         500:
@@ -628,6 +649,17 @@ components:
         location:
           type: string
           example: "2302"
+        datetimes:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventDatetime"
+          example:
+            - start: 2022-05-16T17:15:00+0900
+              end: 2022-05-16T18:00:00+0900
+            - start: 2022-05-17T17:15:00+0900
+              end: 2022-05-17T18:00:00+0900
+            - start: 2022-05-20T18:45:00+0900
+              end: 2022-05-20T19:30:00+0900
         published:
           type: boolean
           example: true
@@ -641,8 +673,22 @@ components:
       required:
         - id
         - title
+        - datetime
         - published
         - completed
+
+    EventDatetime:
+      type: object
+      properties:
+        start:
+          type: string
+          example: 2022-05-16T17:15:00+0900
+        end:
+          type: string
+          example: 2022-05-16T18:00:00+0900
+      required:
+        - start
+        - end
 
     CreateEventBody:
       type: object
@@ -656,6 +702,17 @@ components:
         location:
           type: string
           example: "2302"
+        datetimes:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateEventDatetime"
+          example:
+            - start: 2022-05-16T17:15:00+0900
+              end: 2022-05-16T18:00:00+0900
+            - start: 2022-05-17T17:15:00+0900
+              end: 2022-05-17T18:00:00+0900
+            - start: 2022-05-20T18:45:00+0900
+              end: 2022-05-20T19:30:00+0900
         published:
           type: boolean
           default: true
@@ -666,6 +723,19 @@ components:
           example: false
       required:
         - title
+
+    CreateEventDatetime:
+      type: object
+      properties:
+        start:
+          type: string
+          example: 2022-05-16T17:15:00+0900
+        end:
+          type: string
+          example: 2022-05-16T18:00:00+0900
+      required:
+        - start
+        - end
 
     UpdateEventBody:
       type: object
@@ -679,6 +749,17 @@ components:
         location:
           type: string
           example: "2302"
+        datetimes:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateEventDatetime"
+          example:
+            - start: 2022-05-16T17:15:00+0900
+              end: 2022-05-16T18:00:00+0900
+            - start: 2022-05-17T17:15:00+0900
+              end: 2022-05-17T18:00:00+0900
+            - start: 2022-05-20T18:45:00+0900
+              end: 2022-05-20T19:30:00+0900
         published:
           type: boolean
           example: true

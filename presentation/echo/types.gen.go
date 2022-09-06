@@ -24,11 +24,18 @@ const (
 
 // CreateEventBody defines model for CreateEventBody.
 type CreateEventBody struct {
-	Completed   *bool   `json:"completed,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Location    *string `json:"location,omitempty"`
-	Published   *bool   `json:"published,omitempty"`
-	Title       string  `json:"title"`
+	Completed   *bool                  `json:"completed,omitempty"`
+	Datetimes   *[]CreateEventDatetime `json:"datetimes,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Location    *string                `json:"location,omitempty"`
+	Published   *bool                  `json:"published,omitempty"`
+	Title       string                 `json:"title"`
+}
+
+// CreateEventDatetime defines model for CreateEventDatetime.
+type CreateEventDatetime struct {
+	End   string `json:"end"`
+	Start string `json:"start"`
 }
 
 // CreateEventDocumentBody defines model for CreateEventDocumentBody.
@@ -58,12 +65,19 @@ type CreateUserOverOauth2Body struct {
 // Event defines model for Event.
 type Event struct {
 	Completed   bool             `json:"completed"`
+	Datetimes   *[]EventDatetime `json:"datetimes,omitempty"`
 	Description *string          `json:"description,omitempty"`
 	Documents   *[]EventDocument `json:"documents,omitempty"`
 	Id          string           `json:"id"`
 	Location    *string          `json:"location,omitempty"`
 	Published   bool             `json:"published"`
 	Title       string           `json:"title"`
+}
+
+// EventDatetime defines model for EventDatetime.
+type EventDatetime struct {
+	End   string `json:"end"`
+	Start string `json:"start"`
 }
 
 // EventDocument defines model for EventDocument.
@@ -93,11 +107,12 @@ type Token struct {
 
 // UpdateEventBody defines model for UpdateEventBody.
 type UpdateEventBody struct {
-	Completed   *bool   `json:"completed,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Location    *string `json:"location,omitempty"`
-	Published   *bool   `json:"published,omitempty"`
-	Title       *string `json:"title,omitempty"`
+	Completed   *bool                  `json:"completed,omitempty"`
+	Datetimes   *[]CreateEventDatetime `json:"datetimes,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Location    *string                `json:"location,omitempty"`
+	Published   *bool                  `json:"published,omitempty"`
+	Title       *string                `json:"title,omitempty"`
 }
 
 // UpdateEventDocumentBody defines model for UpdateEventDocumentBody.
