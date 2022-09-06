@@ -673,7 +673,7 @@ components:
       required:
         - id
         - title
-        - datetime
+        - datetimes
         - published
         - completed
 
