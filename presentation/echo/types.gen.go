@@ -65,7 +65,7 @@ type CreateUserOverOauth2Body struct {
 // Event defines model for Event.
 type Event struct {
 	Completed   bool             `json:"completed"`
-	Datetimes   *[]EventDatetime `json:"datetimes,omitempty"`
+	Datetimes   []EventDatetime  `json:"datetimes"`
 	Description *string          `json:"description,omitempty"`
 	Documents   *[]EventDocument `json:"documents,omitempty"`
 	Id          string           `json:"id"`
