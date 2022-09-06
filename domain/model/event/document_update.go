@@ -16,12 +16,20 @@ type UpdateEventDocumentParam struct {
 }
 
 func (p UpdateEventDocumentParam) validate(repo Repos, id string, requestUser user.User) error {
+	/**
+	 * フィールドの検証
+	**/
+	if p.Name == nil && p.Url == nil {
+		return ErrNoUpdates
+	}
+	// `Name`
 	if p.Name != nil {
 		err := validateDocumentName(*p.Name)
 		if err != nil {
 			return err
 		}
 	}
+	// `Url`
 	if p.Url != nil {
 		err := validateUrl(*p.Url)
 		if err != nil {
