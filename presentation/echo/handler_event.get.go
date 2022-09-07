@@ -9,15 +9,22 @@ import (
 )
 
 // (GET /events/{id})
-func (s Server) GetEventsId(ctx echo.Context, id Id) error {
+func (s Server) GetEventsId(ctx echo.Context, id Id, params GetEventsIdParams) error {
 	// Get jwt claim
+	var jwtId *string
 	jcc, err := jwt.Check(ctx)
-	if err != nil {
-		return JSONMessage(ctx, http.StatusUnauthorized, err.Error())
+	if err == nil {
+		jwtId = &jcc.Id
 	}
 
+	// Bind query
+	v := ctx.QueryParams()
+	embed := v["embed"]
+	query := new(event.GetEventQueryParam)
+	query.Embed = &embed
+
 	// Get event
-	e, err := event.GetEvent(id, jcc.Id)
+	e, err := event.GetEvent(id, *query, jwtId)
 	if err != nil {
 		return JSONMessage(ctx, event.ErrToCode(err), err.Error())
 	}

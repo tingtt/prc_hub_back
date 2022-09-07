@@ -45,7 +45,7 @@ func (p UpdateEventDocumentParam) validate(repo Repos, id string, requestUser us
 		}
 
 		// Eventを取得
-		e, err := GetEvent(repo, ed.EventId, requestUser)
+		e, err := GetEvent(repo, ed.EventId, GetEventQueryParam{}, requestUser)
 		if err != nil {
 			return err
 		}

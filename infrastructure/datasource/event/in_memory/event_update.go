@@ -6,7 +6,7 @@ import (
 )
 
 func (r RepositoryEvent) Update(id string, p event.UpdateEventParam) (_ event.Event, err error) {
-	e, err := r.Get(id)
+	e, err := r.Get(id, event.GetEventQueryParam{})
 	if err != nil {
 		return
 	}

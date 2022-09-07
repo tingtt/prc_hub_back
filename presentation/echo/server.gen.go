@@ -24,7 +24,7 @@ type ServerInterface interface {
 	DeleteEventsId(ctx echo.Context, id Id) error
 	// イベント詳細
 	// (GET /events/{id})
-	GetEventsId(ctx echo.Context, id Id) error
+	GetEventsId(ctx echo.Context, id Id, params GetEventsIdParams) error
 	// イベント情報変更
 	// (PATCH /events/{id})
 	PatchEventsId(ctx echo.Context, id Id) error
@@ -117,6 +117,13 @@ func (w *ServerInterfaceWrapper) GetEvents(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter location_contain: %s", err))
 	}
 
+	// ------------- Optional query parameter "embed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "embed", ctx.QueryParams(), &params.Embed)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter embed: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.GetEvents(ctx, params)
 	return err
@@ -162,8 +169,17 @@ func (w *ServerInterfaceWrapper) GetEventsId(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetEventsIdParams
+	// ------------- Optional query parameter "embed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "embed", ctx.QueryParams(), &params.Embed)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter embed: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetEventsId(ctx, id)
+	err = w.Handler.GetEventsId(ctx, id, params)
 	return err
 }
 

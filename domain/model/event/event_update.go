@@ -55,7 +55,7 @@ func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User)
 	// 権限の検証
 	if !requestUser.Admin && !requestUser.Manage {
 		// Eventを取得
-		e, err := GetEvent(repo, id, requestUser)
+		e, err := GetEvent(repo, id, GetEventQueryParam{}, requestUser)
 		if err != nil {
 			return err
 		}

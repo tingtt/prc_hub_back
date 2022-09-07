@@ -11,8 +11,8 @@ var (
 
 type EventRepository interface {
 	Add(e Event) (Event, error)
-	Get(id string) (Event, error)
-	GetList(q GetEventQueryParam) ([]Event, error)
+	Get(id string, q GetEventQueryParam) (Event, error)
+	GetList(q GetEventListQueryParam) ([]Event, error)
 	Update(id string, p UpdateEventParam) (Event, error)
 	Delete(id string) error
 }

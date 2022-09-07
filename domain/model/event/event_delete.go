@@ -15,6 +15,7 @@ func DeleteEvent(repo Repos, id string, requestUser user.User) error {
 	e, err := GetEvent(
 		repo,
 		id,
+		GetEventQueryParam{},
 		requestUser,
 	)
 	if err != nil {

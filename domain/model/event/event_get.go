@@ -2,9 +2,13 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func GetEvent(repo Repos, id string, requestUser user.User) (e Event, err error) {
+type GetEventQueryParam struct {
+	Embed *[]string `query:"embed"`
+}
+
+func GetEvent(repo Repos, id string, q GetEventQueryParam, requestUser user.User) (e Event, err error) {
 	// Get event
-	tmpE, err := repo.Event.Get(id)
+	tmpE, err := repo.Event.Get(id, q)
 	if err != nil {
 		return
 	}

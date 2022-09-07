@@ -1,10 +1,14 @@
 package event
 
-import "time"
+import (
+	"prc_hub_back/domain/model/user"
+	"time"
+)
 
 type Event struct {
 	Id          string           `json:"id"`
 	Name        string           `json:"name"`
+	User        *user.User       `json:"user"`
 	Description *string          `json:"description"`
 	Location    *string          `json:"location,omitempty"`
 	Datetimes   []EventDatetime  `json:"datetimes"`

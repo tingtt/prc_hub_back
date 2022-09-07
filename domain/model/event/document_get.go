@@ -10,7 +10,7 @@ func GetDocument(repo Repos, id string, requestUser user.User) (ed EventDocument
 	}
 
 	// Get event
-	e, err := GetEvent(repo, tmpEd.EventId, requestUser)
+	e, err := GetEvent(repo, tmpEd.EventId, GetEventQueryParam{}, requestUser)
 	if err != nil {
 		return
 	}

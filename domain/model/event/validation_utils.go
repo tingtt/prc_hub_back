@@ -39,7 +39,7 @@ func validateUrl(url string) error {
 }
 
 func validateEventId(repo EventRepository, id string) error {
-	_, err := repo.Get(id)
+	_, err := repo.Get(id, GetEventQueryParam{})
 	return err
 }
 

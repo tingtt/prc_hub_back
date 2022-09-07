@@ -35,7 +35,7 @@ func (p CreateEventDocumentParam) validate(repo Repos, requestUser user.User) er
 	// 権限の検証
 	if !requestUser.Admin && !requestUser.Manage {
 		// Eventを取得
-		e, err := GetEvent(repo, p.EventId, requestUser)
+		e, err := GetEvent(repo, p.EventId, GetEventQueryParam{}, requestUser)
 		if err != nil {
 			return err
 		}

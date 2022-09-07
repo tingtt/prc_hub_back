@@ -28,8 +28,8 @@ type CreateEventBody struct {
 	Datetimes   *[]CreateEventDatetime `json:"datetimes,omitempty"`
 	Description *string                `json:"description,omitempty"`
 	Location    *string                `json:"location,omitempty"`
+	Name        string                 `json:"name"`
 	Published   *bool                  `json:"published,omitempty"`
-	Title       string                 `json:"title"`
 }
 
 // CreateEventDatetime defines model for CreateEventDatetime.
@@ -70,8 +70,9 @@ type Event struct {
 	Documents   *[]EventDocument `json:"documents,omitempty"`
 	Id          string           `json:"id"`
 	Location    *string          `json:"location,omitempty"`
+	Name        string           `json:"name"`
 	Published   bool             `json:"published"`
-	Title       string           `json:"title"`
+	User        *User            `json:"user,omitempty"`
 }
 
 // EventDatetime defines model for EventDatetime.
@@ -111,8 +112,8 @@ type UpdateEventBody struct {
 	Datetimes   *[]CreateEventDatetime `json:"datetimes,omitempty"`
 	Description *string                `json:"description,omitempty"`
 	Location    *string                `json:"location,omitempty"`
+	Name        *string                `json:"name,omitempty"`
 	Published   *bool                  `json:"published,omitempty"`
-	Title       *string                `json:"title,omitempty"`
 }
 
 // UpdateEventDocumentBody defines model for UpdateEventDocumentBody.
@@ -158,6 +159,9 @@ type UserWithToken struct {
 // DocumentId defines model for document_id.
 type DocumentId = string
 
+// Embed defines model for embed.
+type Embed = []string
+
 // Id defines model for id.
 type Id = string
 
@@ -185,7 +189,19 @@ type GetEventsParams struct {
 	NameContain     *NameContain     `form:"name_contain,omitempty" json:"name_contain,omitempty"`
 	Location        *Location        `form:"location,omitempty" json:"location,omitempty"`
 	LocationContain *LocationContain `form:"location_contain,omitempty" json:"location_contain,omitempty"`
+	Embed           *Embed           `form:"embed,omitempty" json:"embed,omitempty"`
 }
+
+// GetEventsParamsEmbed defines parameters for GetEvents.
+type GetEventsParamsEmbed string
+
+// GetEventsIdParams defines parameters for GetEventsId.
+type GetEventsIdParams struct {
+	Embed *Embed `form:"embed,omitempty" json:"embed,omitempty"`
+}
+
+// GetEventsIdParamsEmbed defines parameters for GetEventsId.
+type GetEventsIdParamsEmbed string
 
 // GetEventsIdDocumentsParams defines parameters for GetEventsIdDocuments.
 type GetEventsIdDocumentsParams struct {

@@ -202,6 +202,7 @@ paths:
         - $ref: "#/components/parameters/name_contain"
         - $ref: "#/components/parameters/location"
         - $ref: "#/components/parameters/location_contain"
+        - $ref: "#/components/parameters/embed"
       responses:
         200:
           description: Success
@@ -212,8 +213,17 @@ paths:
                 items:
                   $ref: "#/components/schemas/Event"
                 example:
-                  - id: 1
-                    title: ITシステムの構造
+                  - id: "1"
+                    name: ITシステムの構造
+                    user:
+                      id: "1"
+                      name: "prc_hub_user"
+                      email: "user@prchub.com"
+                      github_username: ecc-proken
+                      twitter_id: ecc_prc
+                      post_event_availabled: true
+                      manage: false
+                      admin: false
                     description: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
                     location: "2302"
                     datetimes:
@@ -226,11 +236,20 @@ paths:
                     published: true
                     completed: true
                     documents:
-                      - id: 1
+                      - id: "1"
                         name: スライド
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
-                  - id: 2
-                    title: Git/GitHubハンズオン
+                  - id: "2"
+                    name: Git/GitHubハンズオン
+                    user:
+                      id: "1"
+                      name: "prc_hub_user"
+                      email: "user@prchub.com"
+                      github_username: ecc-proken
+                      twitter_id: ecc_prc
+                      post_event_availabled: true
+                      manage: false
+                      admin: false
                     description: エンジニア必須スキルのGitとGitHubのハンズオンを行います。\nGit/GitHubはITシステムを開発する上でよく利用する技術・サービスです。
                     location: "2302"
                     datetimes:
@@ -243,14 +262,23 @@ paths:
                     published: true
                     completed: true
                     documents:
-                      - id: 1
+                      - id: "1"
                         name: スライド
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/slide.pdf
-                      - id: 2
+                      - id: "2"
                         name: ハンズオン資料
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/DOCUMENT.md
-                  - id: 3
-                    title: Webサーバハンズオン
+                  - id: "3"
+                    name: Webサーバハンズオン
+                    user:
+                      id: "1"
+                      name: "prc_hub_user"
+                      email: "user@prchub.com"
+                      github_username: ecc-proken
+                      twitter_id: ecc_prc
+                      post_event_availabled: true
+                      manage: false
+                      admin: false
                     description: 4年生が実際に開発しているWebサイトを題材にハンズオンを行います。\n題材ははNext.js(React.js/node.js)というWebサイトなどを作るJavaScriptのフレームワークを利用しています。
                     location: "2302"
                     datetimes:
@@ -288,6 +316,7 @@ paths:
       security: []
       parameters:
         - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/embed"
       responses:
         200:
           description: Success
@@ -481,6 +510,9 @@ components:
         post_event_availabled:
           type: boolean
           example: true
+        manage:
+          type: boolean
+          example: false
         admin:
           type: boolean
           example: false
@@ -489,6 +521,7 @@ components:
         - name
         - email
         - post_event_availabled
+        - manage
         - admin
 
     LoginBody:
@@ -640,9 +673,11 @@ components:
       properties:
         id:
           type: string
-        title:
+        name:
           type: string
           example: ITシステムの構造
+        user:
+          $ref: "#/components/schemas/User"
         description:
           type: string
           example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
@@ -673,7 +708,7 @@ components:
             $ref: "#/components/schemas/EventDocument"
       required:
         - id
-        - title
+        - name
         - datetimes
         - published
         - completed
@@ -694,7 +729,7 @@ components:
     CreateEventBody:
       type: object
       properties:
-        title:
+        name:
           type: string
           example: ITシステムの構造
         description:
@@ -723,7 +758,7 @@ components:
           default: false
           example: false
       required:
-        - title
+        - name
 
     CreateEventDatetime:
       type: object
@@ -741,7 +776,7 @@ components:
     UpdateEventBody:
       type: object
       properties:
-        title:
+        name:
           type: string
           example: ITシステムの構造
         description:
@@ -909,6 +944,16 @@ components:
       in: query
       schema:
         type: string
+    embed:
+      name: embed
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - user
+            - documents
 
   securitySchemes:
     Bearer:

@@ -11,22 +11,41 @@ import (
 // (GET /events)
 func (s Server) GetEvents(ctx echo.Context, params GetEventsParams) error {
 	// Get jwt claim
+	var jwtId *string
 	jcc, err := jwt.Check(ctx)
-	if err != nil {
-		return JSONMessage(ctx, http.StatusUnauthorized, err.Error())
+	if err == nil {
+		jwtId = &jcc.Id
 	}
 
 	// Bind query
-	query := new(event.GetEventQueryParam)
-	if err := ctx.Bind(query); err != nil {
+	query := new(event.GetEventListQueryParam)
+	type Query struct {
+		Published       *bool   `query:"published"`
+		Name            *string `query:"name"`
+		NameContain     *string `query:"name_contain"`
+		Location        *string `query:"location"`
+		LocationContain *string `query:"location_contain"`
+	}
+	queryTmp := new(Query)
+	if err := ctx.Bind(queryTmp); err != nil {
 		return JSONMessage(ctx, http.StatusBadRequest, err.Error())
 	}
+	v := ctx.QueryParams()
+	embed := v["embed"]
+	query.Embed = &embed
+	query.Name = queryTmp.Name
+	query.NameContain = queryTmp.NameContain
+	query.Location = queryTmp.Location
+	query.LocationContain = queryTmp.LocationContain
 
 	// Get events
-	events, err := event.GetEventList(*query, jcc.Id)
+	events, err := event.GetEventList(*query, jwtId)
 	if err != nil {
 		return JSONMessage(ctx, event.ErrToCode(err), err.Error())
 	}
 
+	if events == nil {
+		return JSONPretty(ctx, http.StatusOK, []interface{}{})
+	}
 	return JSONPretty(ctx, http.StatusOK, events)
 }

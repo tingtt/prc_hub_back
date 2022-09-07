@@ -18,7 +18,7 @@ func DeleteEventDocument(repo Repos, id string, requestUser user.User) error {
 	}
 
 	// Get event
-	e, err := GetEvent(repo, ed.EventId, requestUser)
+	e, err := GetEvent(repo, ed.EventId, GetEventQueryParam{}, requestUser)
 	if err != nil {
 		return err
 	}
