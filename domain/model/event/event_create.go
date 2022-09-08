@@ -22,8 +22,8 @@ type CreateEventParam struct {
 }
 
 type CreateEventDatetimeParam struct {
-	Start util.RFC3339Time `json:"start"`
-	End   util.RFC3339Time `json:"end"`
+	Start time.Time `json:"start"`
+	End   time.Time `json:"end"`
 }
 
 func (p CreateEventDatetimeParam) validate() error {
@@ -74,8 +74,8 @@ func CreateEvent(repo EventRepository, p CreateEventParam, requestUser user.User
 	var datetimes []EventDatetime
 	for _, d := range p.Datetimes {
 		datetimes = append(datetimes, EventDatetime{
-			Start: time.Time(d.Start),
-			End:   time.Time(d.End),
+			Start: d.Start.UTC(),
+			End:   d.End.UTC(),
 		})
 	}
 
