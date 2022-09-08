@@ -8,10 +8,10 @@ import (
 type Event struct {
 	Id          string           `json:"id"`
 	Name        string           `json:"name"`
-	User        *user.User       `json:"user"`
-	Description *string          `json:"description"`
+	User        *user.User       `json:"user,omitempty"`
+	Description *string          `json:"description,omitempty"`
 	Location    *string          `json:"location,omitempty"`
-	Datetimes   []EventDatetime  `json:"datetimes"`
+	Datetimes   []EventDatetime  `json:"datetimes,omitempty"`
 	Documents   *[]EventDocument `json:"documents,omitempty"`
 	Published   bool             `json:"published"`
 	Completed   bool             `json:"completed"`
