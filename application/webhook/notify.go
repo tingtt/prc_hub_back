@@ -11,11 +11,14 @@ func NotifyEvent(e event.Event) error {
 	msg := "イベント情報\n\n%s: %s\n\n"
 	msgParams := []interface{}{"勉強会", e.Name}
 	if e.Description != nil {
-		msg += "%s\n\n"
-		msgParams = append(msgParams, *e.Description)
+		for _, s := range strings.Split(*e.Description, "\\n") {
+			msg += "%s\n"
+			msgParams = append(msgParams, s)
+		}
+		msg += "\n"
 	}
-	msg += "%s/events/%d"
-	msgParams = append(msgParams, frontUrl, e.Id)
+	msg += "%s/events/%s"
+	msgParams = append(msgParams, strings.TrimSuffix(frontUrl, "/"), e.Id)
 
 	return NotifyToAllProviders(fmt.Sprintf(msg, msgParams...))
 }
