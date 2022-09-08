@@ -96,13 +96,7 @@ func GetEventList(q GetEventListQueryParam, requestUserId *string) (events []eve
 			Event:    eventRepository,
 			Document: documentRepository,
 		},
-		event.GetEventListQueryParam{
-			Published:       q.Published,
-			Name:            q.Name,
-			NameContain:     q.NameContain,
-			Location:        q.Location,
-			LocationContain: q.LocationContain,
-		},
+		q,
 		*u,
 	)
 }
