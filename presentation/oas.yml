@@ -680,7 +680,7 @@ components:
           $ref: "#/components/schemas/User"
         description:
           type: string
-          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
         location:
           type: string
           example: "2302"
@@ -734,7 +734,7 @@ components:
           example: ITシステムの構造
         description:
           type: string
-          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
         location:
           type: string
           example: "2302"
@@ -781,7 +781,7 @@ components:
           example: ITシステムの構造
         description:
           type: string
-          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！"
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
         location:
           type: string
           example: "2302"
