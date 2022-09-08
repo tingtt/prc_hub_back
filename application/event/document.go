@@ -29,9 +29,9 @@ func CreateDocument(p CreateEventDocumentParam, requestUserId string) (_ event.E
 			Document: documentRepository,
 		},
 		event.CreateEventDocumentParam{
-			EventId: p.Name,
-			Name:    p.Url,
-			Url:     p.EventId,
+			EventId: p.EventId,
+			Name:    p.Name,
+			Url:     p.Url,
 		},
 		u,
 	)

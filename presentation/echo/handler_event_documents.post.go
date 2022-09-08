@@ -21,6 +21,7 @@ func (s Server) PostEventsIdDocuments(ctx echo.Context, id Id) error {
 	if err := ctx.Bind(body); err != nil {
 		return JSONMessage(ctx, http.StatusBadRequest, err.Error())
 	}
+	body.EventId = id
 
 	// Create document
 	ed, err := event.CreateDocument(*body, jcc.Id)
