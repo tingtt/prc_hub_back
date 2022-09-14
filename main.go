@@ -27,6 +27,7 @@ var (
 	adminPassword      = flag_with_env.String("admin-password", "ADMIN_PASSWORD", "", "Admin user password")
 	lineNotifyToken    = flag_with_env.String("line-notify-token", "LINE_NOTIFY_TOKEN", "", "LINE notify token")
 	frontEndUrl        = flag_with_env.String("frontend-url", "FRONTEND_URL", "", "Frontend url")
+	allowOrigins       = flag_with_env.Array("allow-origin", "CORS allow origins")
 )
 
 var (
@@ -60,5 +61,5 @@ func main() {
 		fmt.Printf("err: %v\n", err)
 	}
 
-	echo.Start(*port, *logLevel, *gzipLevel, *issuer, *secret)
+	echo.Start(*port, *logLevel, *gzipLevel, *issuer, *secret, *allowOrigins)
 }

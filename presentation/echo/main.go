@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret string) {
+func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret string, allowOrigins []string) {
 	// echoサーバーのインスタンス生成
 	e := echo.New()
 
@@ -20,6 +20,21 @@ func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret
 
 	// ログレベルの設定
 	e.Logger.SetLevel(log.Lvl(logLevel))
+
+	// CORS
+	if allowOrigins != nil {
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: allowOrigins,
+			AllowHeaders: []string{
+				echo.HeaderOrigin,
+				echo.HeaderContentType,
+				echo.HeaderAccept,
+				echo.HeaderAuthorization,
+			},
+		}))
+		e.Logger.Info("CORS enabled")
+		e.Logger.Debugf("CORS allow origins: %v", allowOrigins)
+	}
 
 	// JWT
 	jwt.InitWithSkipper(
