@@ -81,8 +81,9 @@ func Check(ctx echo.Context) (claims *jwtCustumClaims, err error) {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 		var token *jwt.Token
-		token, err = jwt.Parse(
+		token, err = jwt.ParseWithClaims(
 			tokenString,
+			&jwtCustumClaims{},
 			func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, ErrUnexpectedSigningMethod
