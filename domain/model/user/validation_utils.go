@@ -29,6 +29,9 @@ func validateEmail(repo UserRepository, email string) error {
 	if err == nil || err != ErrUserNotFound {
 		return ErrValidateEmailAlreadyUsed
 	}
+	if err == ErrUserNotFound {
+		err = nil
+	}
 	return err
 }
 
