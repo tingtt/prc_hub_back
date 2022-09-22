@@ -664,7 +664,7 @@ components:
         post_event_availabled:
           type: boolean
           example: true
-        admin:
+        manage:
           type: boolean
           example: false
 
