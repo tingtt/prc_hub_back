@@ -13,7 +13,7 @@ func Update(id string, p UpdateUserParam, requestUserId string) (_ user.UserWith
 	}
 
 	// リクエスト元のユーザーを取得
-	u, err := Get(id)
+	u, err := Get(requestUserId)
 	if err != nil {
 		return
 	}
