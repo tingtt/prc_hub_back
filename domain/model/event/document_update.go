@@ -15,7 +15,7 @@ type UpdateEventDocumentParam struct {
 	Url  *string `json:"url"`
 }
 
-func (p UpdateEventDocumentParam) validate(repo EventDocumentRepository, qs EventQueryService, id string, requestUser user.User) error {
+func (p UpdateEventDocumentParam) validate(repo EventRepository, qs EventQueryService, id string, requestUser user.User) error {
 	/**
 	 * フィールドの検証
 	**/
@@ -60,9 +60,9 @@ func (p UpdateEventDocumentParam) validate(repo EventDocumentRepository, qs Even
 	return nil
 }
 
-func UpdateEventDocument(repo EventDocumentRepository, qs EventQueryService, id string, p UpdateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
+func UpdateEventDocument(repo EventRepository, qs EventQueryService, id string, p UpdateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
 	// 確認
-	_, err = repo.Get(id)
+	_, err = repo.GetDocument(id)
 	if err != nil {
 		return
 	}
@@ -73,5 +73,5 @@ func UpdateEventDocument(repo EventDocumentRepository, qs EventQueryService, id 
 		return
 	}
 
-	return repo.Update(id, p)
+	return repo.UpdateDocument(id, p)
 }

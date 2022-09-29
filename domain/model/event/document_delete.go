@@ -10,7 +10,7 @@ var (
 	ErrCannotDeleteEventDocument = errors.New("sorry, you cannot delete this document")
 )
 
-func DeleteEventDocument(repo EventDocumentRepository, qs EventQueryService, id string, requestUser user.User) error {
+func DeleteEventDocument(repo EventRepository, qs EventQueryService, id string, requestUser user.User) error {
 	// Get document
 	ed, err := GetDocument(repo, qs, id, requestUser)
 	if err != nil {
@@ -30,5 +30,5 @@ func DeleteEventDocument(repo EventDocumentRepository, qs EventQueryService, id 
 		return ErrCannotDeleteEventDocument
 	}
 
-	return repo.Delete(id)
+	return repo.DeleteDocument(id)
 }

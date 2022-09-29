@@ -3,9 +3,8 @@ package event_inmemory
 import "prc_hub_back/domain/model/event"
 
 type (
-	RepositoryEvent         struct{}
-	RepositoryEventDocument struct{}
-	QueryServiceEvent       struct{}
+	RepositoryEvent   struct{}
+	QueryServiceEvent struct{}
 )
 
 var (

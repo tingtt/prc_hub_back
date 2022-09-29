@@ -34,7 +34,6 @@ var (
 	repositoryUser            = user_inmemory.Repository{}
 	repositoryOAuth2          = oauth2_inmemory.Repository{}
 	repositoryEvent           = event_inmemory.RepositoryEvent{}
-	repositoryDocument        = event_inmemory.RepositoryEventDocument{}
 	queryServiceEvent         = event_inmemory.QueryServiceEvent{}
 	webhookProviderLineNotify = webhook_line_notify.WebHookLineNotify{}
 )
@@ -46,7 +45,7 @@ func main() {
 	// Init application services
 	user.InitApplication(repositoryUser)
 	oauth2.InitApplication(repositoryOAuth2, *githubClientId, *githubClientSecret)
-	event.InitApplication(repositoryEvent, repositoryDocument, queryServiceEvent)
+	event.InitApplication(repositoryEvent, queryServiceEvent)
 	webhook.InitApplication(
 		*frontEndUrl,
 		webhook.Provider{

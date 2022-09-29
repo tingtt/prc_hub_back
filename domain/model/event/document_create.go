@@ -17,7 +17,7 @@ type CreateEventDocumentParam struct {
 	Url     string `json:"url"`
 }
 
-func (p CreateEventDocumentParam) validate(repo EventDocumentRepository, qs EventQueryService, requestUser user.User) error {
+func (p CreateEventDocumentParam) validate(repo EventRepository, qs EventQueryService, requestUser user.User) error {
 	// フィールドの検証
 	err := validateDocumentName(p.Name)
 	if err != nil {
@@ -49,13 +49,13 @@ func (p CreateEventDocumentParam) validate(repo EventDocumentRepository, qs Even
 	return nil
 }
 
-func CreateEventDocument(repo EventDocumentRepository, qs EventQueryService, p CreateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
+func CreateEventDocument(repo EventRepository, qs EventQueryService, p CreateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
 	err = p.validate(repo, qs, requestUser)
 	if err != nil {
 		return
 	}
 
-	return repo.Add(EventDocument{
+	return repo.AddDocument(EventDocument{
 		Id:      util.UUID(),
 		EventId: p.EventId,
 		Name:    p.Name,

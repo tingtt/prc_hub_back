@@ -4,7 +4,7 @@ import (
 	"prc_hub_back/domain/model/event"
 )
 
-func (r RepositoryEventDocument) Delete(id string) (err error) {
+func (r RepositoryEvent) DeleteDocument(id string) (err error) {
 	old := dataDocument
 	dataDocument = nil
 	err = event.ErrEventDocumentNotFound

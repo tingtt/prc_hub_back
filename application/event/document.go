@@ -24,8 +24,8 @@ func CreateDocument(p CreateEventDocumentParam, requestUserId string) (_ event.E
 	}
 
 	return event.CreateEventDocument(
-		documentRepository,
-		eventQueryService,
+		repo,
+		queryService,
 		event.CreateEventDocumentParam{
 			EventId: p.EventId,
 			Name:    p.Name,
@@ -48,8 +48,8 @@ func GetDocument(id string, requestUserId string) (_ event.EventDocument, err er
 	}
 
 	return event.GetDocument(
-		documentRepository,
-		eventQueryService,
+		repo,
+		queryService,
 		id,
 		u,
 	)
@@ -61,7 +61,7 @@ func GetDocumentList(q GetDocumentQueryParam, requestUserId string) (documents [
 		return
 	}
 	return event.GetDocumentList(
-		documentRepository,
+		repo,
 		event.GetDocumentQueryParam{
 			EventId:     q.EventId,
 			Name:        q.Name,
@@ -83,8 +83,8 @@ func UpdateDocument(id string, p UpdateEventDocumentParam, requestUserId string)
 	}
 
 	return event.UpdateEventDocument(
-		documentRepository,
-		eventQueryService,
+		repo,
+		queryService,
 		id,
 		event.UpdateEventDocumentParam{
 			Name: p.Name,
@@ -106,8 +106,8 @@ func DeleteDocument(id string, requestUserId string) error {
 	}
 
 	return event.DeleteEventDocument(
-		documentRepository,
-		eventQueryService,
+		repo,
+		queryService,
 		id,
 		u,
 	)

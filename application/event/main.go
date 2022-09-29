@@ -7,10 +7,9 @@ import (
 
 // Singleton fields
 var (
-	initialized        = false
-	eventRepository    event.EventRepository
-	documentRepository event.EventDocumentRepository
-	eventQueryService  event.EventQueryService
+	initialized  = false
+	repo         event.EventRepository
+	queryService event.EventQueryService
 )
 
 // Errors
@@ -18,9 +17,8 @@ var (
 	ErrRepositoryNotInitialized = errors.New("repository not initialized")
 )
 
-func InitApplication(eRepo event.EventRepository, dRepo event.EventDocumentRepository, eQueryService event.EventQueryService) {
+func InitApplication(eRepo event.EventRepository, eQueryService event.EventQueryService) {
 	initialized = true
-	eventRepository = eRepo
-	documentRepository = dRepo
-	eventQueryService = eQueryService
+	repo = eRepo
+	queryService = eQueryService
 }

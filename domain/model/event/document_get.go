@@ -2,9 +2,9 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func GetDocument(repo EventDocumentRepository, qs EventQueryService, id string, requestUser user.User) (ed EventDocument, err error) {
+func GetDocument(repo EventRepository, qs EventQueryService, id string, requestUser user.User) (ed EventDocument, err error) {
 	// Get document
-	tmpEd, err := repo.Get(id)
+	tmpEd, err := repo.GetDocument(id)
 	if err != nil {
 		return
 	}

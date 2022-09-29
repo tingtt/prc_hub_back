@@ -2,8 +2,8 @@ package event_inmemory
 
 import "prc_hub_back/domain/model/event"
 
-func (r RepositoryEventDocument) Update(id string, p event.UpdateEventDocumentParam) (_ event.EventDocument, err error) {
-	ed, err := r.Get(id)
+func (r RepositoryEvent) UpdateDocument(id string, p event.UpdateEventDocumentParam) (_ event.EventDocument, err error) {
+	ed, err := r.GetDocument(id)
 	if err != nil {
 		return
 	}
@@ -15,11 +15,11 @@ func (r RepositoryEventDocument) Update(id string, p event.UpdateEventDocumentPa
 		ed.Url = *p.Url
 	}
 
-	err = r.Delete(id)
+	err = r.DeleteDocument(id)
 	if err != nil {
 		return
 	}
-	_, err = r.Add(ed)
+	_, err = r.AddDocument(ed)
 	if err != nil {
 		return
 	}
