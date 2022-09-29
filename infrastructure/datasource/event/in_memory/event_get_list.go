@@ -8,9 +8,9 @@ import (
 )
 
 func (s QueryServiceEvent) GetList(q event.GetEventListQueryParam) (_ []event.EventEmbed, err error) {
-	queryParamExist := q.Name == nil && q.NameContain == nil && q.Location == nil && q.LocationContain == nil &&
+	queryParamNotExists := q.Name == nil && q.NameContain == nil && q.Location == nil && q.LocationContain == nil &&
 		q.Published == nil && q.Embed == nil
-	if queryParamExist {
+	if queryParamNotExists {
 		events := []event.EventEmbed{}
 		for _, e := range dataEvent {
 			events = append(events, event.EventEmbed{Event: e})
