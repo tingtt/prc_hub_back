@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func NotifyEvent(e event.Event) error {
+func NotifyEvent(e event.EventEmbed) error {
 	// メッセージを生成
 	msg := "イベント情報\n\n%s: %s\n\n"
 	msgParams := []interface{}{"勉強会", e.Name}
@@ -23,7 +23,7 @@ func NotifyEvent(e event.Event) error {
 	return NotifyToAllProviders(fmt.Sprintf(msg, msgParams...))
 }
 
-func NotifyEventDocuments(e event.Event) error {
+func NotifyEventDocuments(e event.EventEmbed) error {
 	if e.Documents != nil && len(*e.Documents) != 0 {
 		// メッセージを生成
 		msg := "イベント資料\n\n%s: %s\n\n"

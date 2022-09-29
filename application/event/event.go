@@ -28,7 +28,7 @@ func CreateEvent(p CreateEventParam, requestUserId string) (_ event.Event, err e
 	return event.CreateEvent(eventRepository, p, u)
 }
 
-func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (_ event.Event, err error) {
+func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (_ event.EventEmbed, err error) {
 	if !initialized {
 		err = ErrRepositoryNotInitialized
 		return
@@ -55,17 +55,14 @@ func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (_ event.E
 	}
 
 	return event.GetEvent(
-		event.Repos{
-			Event:    eventRepository,
-			Document: documentRepository,
-		},
+		eventQueryService,
 		id,
 		q,
 		*u,
 	)
 }
 
-func GetEventList(q GetEventListQueryParam, requestUserId *string) (events []event.Event, err error) {
+func GetEventList(q GetEventListQueryParam, requestUserId *string) (events []event.EventEmbed, err error) {
 	if !initialized {
 		err = ErrRepositoryNotInitialized
 		return
@@ -92,10 +89,7 @@ func GetEventList(q GetEventListQueryParam, requestUserId *string) (events []eve
 	}
 
 	return event.GetEventList(
-		event.Repos{
-			Event:    eventRepository,
-			Document: documentRepository,
-		},
+		eventQueryService,
 		q,
 		*u,
 	)
@@ -114,10 +108,8 @@ func UpdateEvent(id string, p UpdateEventParam, requestUserId string) (_ event.E
 	}
 
 	return event.UpdateEvent(
-		event.Repos{
-			Event:    eventRepository,
-			Document: documentRepository,
-		},
+		eventRepository,
+		eventQueryService,
 		id,
 		p,
 		u,
@@ -136,10 +128,8 @@ func DeleteEvent(id string, requestUserId string) error {
 	}
 
 	return event.DeleteEvent(
-		event.Repos{
-			Event:    eventRepository,
-			Document: documentRepository,
-		},
+		eventRepository,
+		eventQueryService,
 		id,
 		u,
 	)

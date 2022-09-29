@@ -10,10 +10,10 @@ var (
 	ErrCannotDeleteEvent = errors.New("sorry, you cannot delete this event")
 )
 
-func DeleteEvent(repo Repos, id string, requestUser user.User) error {
+func DeleteEvent(repo EventRepository, qs EventQueryService, id string, requestUser user.User) error {
 	// Get event
 	e, err := GetEvent(
-		repo,
+		qs,
 		id,
 		GetEventQueryParam{},
 		requestUser,
@@ -28,5 +28,5 @@ func DeleteEvent(repo Repos, id string, requestUser user.User) error {
 		return ErrCannotDeleteEvent
 	}
 
-	return repo.Event.Delete(id)
+	return repo.Delete(id)
 }

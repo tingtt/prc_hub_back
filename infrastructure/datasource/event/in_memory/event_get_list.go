@@ -7,18 +7,20 @@ import (
 	"prc_hub_back/domain/model/user"
 )
 
-func (r RepositoryEvent) GetList(q event.GetEventListQueryParam) (_ []event.Event, err error) {
-	if q.Name == nil &&
-		q.NameContain == nil &&
-		q.Location == nil &&
-		q.LocationContain == nil &&
-		q.Published == nil &&
-		q.Embed == nil {
-		return dataEvent, nil
+func (s QueryServiceEvent) GetList(q event.GetEventListQueryParam) (_ []event.EventEmbed, err error) {
+	queryParamExist := q.Name == nil && q.NameContain == nil && q.Location == nil && q.LocationContain == nil &&
+		q.Published == nil && q.Embed == nil
+	if queryParamExist {
+		events := []event.EventEmbed{}
+		for _, e := range dataEvent {
+			events = append(events, event.EventEmbed{Event: e})
+		}
+		return events, nil
 	}
 
-	var events []event.Event
+	var events []event.EventEmbed
 	for _, e := range dataEvent {
+		ee := event.EventEmbed{Event: e}
 		if q.Embed != nil {
 			// 埋め込みフィールドの取得
 			for _, embed := range *q.Embed {
@@ -33,7 +35,7 @@ func (r RepositoryEvent) GetList(q event.GetEventListQueryParam) (_ []event.Even
 						u = user.User{Name: "Deleted user"}
 					}
 					// `User`を埋め込み
-					e.User = &u
+					ee.User = &u
 				}
 				if embed == "documents" {
 					// `User`を取得
@@ -56,11 +58,11 @@ func (r RepositoryEvent) GetList(q event.GetEventListQueryParam) (_ []event.Even
 						return nil, err
 					}
 					// `Document`を埋め込み
-					e.Documents = &documents
+					ee.Documents = &documents
 				}
 			}
 		}
-		events = append(events, e)
+		events = append(events, ee)
 	}
 	return events, nil
 }

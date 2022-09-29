@@ -2,15 +2,15 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func GetDocument(repo Repos, id string, requestUser user.User) (ed EventDocument, err error) {
+func GetDocument(repo EventDocumentRepository, qs EventQueryService, id string, requestUser user.User) (ed EventDocument, err error) {
 	// Get document
-	tmpEd, err := repo.Document.Get(id)
+	tmpEd, err := repo.Get(id)
 	if err != nil {
 		return
 	}
 
 	// Get event
-	e, err := GetEvent(repo, tmpEd.EventId, GetEventQueryParam{}, requestUser)
+	e, err := GetEvent(qs, tmpEd.EventId, GetEventQueryParam{}, requestUser)
 	if err != nil {
 		return
 	}

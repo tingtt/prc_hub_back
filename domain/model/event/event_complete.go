@@ -2,7 +2,7 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func CompleteEvent(repo Repos, id string, requestUser user.User) (Event, error) {
+func CompleteEvent(repo EventRepository, qs EventQueryService, id string, requestUser user.User) (Event, error) {
 	completed := true
-	return UpdateEvent(repo, id, UpdateEventParam{Completed: &completed}, requestUser)
+	return UpdateEvent(repo, qs, id, UpdateEventParam{Completed: &completed}, requestUser)
 }

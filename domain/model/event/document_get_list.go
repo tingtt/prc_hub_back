@@ -6,7 +6,7 @@ type GetDocumentQueryParam struct {
 	NameContain *string `query:"name_contain"`
 }
 
-func GetDocumentList(repo Repos, q GetDocumentQueryParam) ([]EventDocument, error) {
+func GetDocumentList(repo EventDocumentRepository, q GetDocumentQueryParam) ([]EventDocument, error) {
 	// TODO: 権限によって表示を変更
-	return repo.Document.GetList(q)
+	return repo.GetList(q)
 }

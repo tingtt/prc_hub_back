@@ -11,7 +11,7 @@ type GetEventListQueryParam struct {
 	Embed           *[]string `query:"embed"`
 }
 
-func GetEventList(repo Repos, q GetEventListQueryParam, requestUser user.User) ([]Event, error) {
+func GetEventList(qs EventQueryService, q GetEventListQueryParam, requestUser user.User) ([]EventEmbed, error) {
 	// TODO: 権限によって表示を変更
-	return repo.Event.GetList(q)
+	return qs.GetList(q)
 }

@@ -6,9 +6,9 @@ type GetEventQueryParam struct {
 	Embed *[]string `query:"embed"`
 }
 
-func GetEvent(repo Repos, id string, q GetEventQueryParam, requestUser user.User) (e Event, err error) {
+func GetEvent(qs EventQueryService, id string, q GetEventQueryParam, requestUser user.User) (e EventEmbed, err error) {
 	// Get event
-	tmpE, err := repo.Event.Get(id, q)
+	tmpE, err := qs.Get(id, q)
 	if err != nil {
 		return
 	}

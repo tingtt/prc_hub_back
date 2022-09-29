@@ -38,8 +38,8 @@ func validateUrl(url string) error {
 	return nil
 }
 
-func validateEventId(repo EventRepository, id string) error {
-	_, err := repo.Get(id, GetEventQueryParam{})
+func validateEventId(qs EventQueryService, id string) error {
+	_, err := qs.Get(id, GetEventQueryParam{})
 	return err
 }
 

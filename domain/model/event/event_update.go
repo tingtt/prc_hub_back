@@ -20,7 +20,7 @@ type UpdateEventParam struct {
 	Completed   *bool                       `json:"completed,omitempty"`
 }
 
-func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User) error {
+func (p UpdateEventParam) validate(qs EventQueryService, id string, requestUser user.User) error {
 	/**
 	 * フィールドの検証
 	**/
@@ -55,7 +55,7 @@ func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User)
 	// 権限の検証
 	if !requestUser.Admin && !requestUser.Manage {
 		// Eventを取得
-		e, err := GetEvent(repo, id, GetEventQueryParam{}, requestUser)
+		e, err := GetEvent(qs, id, GetEventQueryParam{}, requestUser)
 		if err != nil {
 			return err
 		}
@@ -69,12 +69,12 @@ func (p UpdateEventParam) validate(repo Repos, id string, requestUser user.User)
 	return nil
 }
 
-func UpdateEvent(repo Repos, id string, p UpdateEventParam, requestUser user.User) (_ Event, err error) {
+func UpdateEvent(repo EventRepository, qs EventQueryService, id string, p UpdateEventParam, requestUser user.User) (_ Event, err error) {
 	// バリデーション
-	err = p.validate(repo, id, requestUser)
+	err = p.validate(qs, id, requestUser)
 	if err != nil {
 		return
 	}
 
-	return repo.Event.Update(id, p)
+	return repo.Update(id, p)
 }

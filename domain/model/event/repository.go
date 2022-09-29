@@ -11,10 +11,13 @@ var (
 
 type EventRepository interface {
 	Add(e Event) (Event, error)
-	Get(id string, q GetEventQueryParam) (Event, error)
-	GetList(q GetEventListQueryParam) ([]Event, error)
 	Update(id string, p UpdateEventParam) (Event, error)
 	Delete(id string) error
+}
+
+type EventQueryService interface {
+	Get(id string, q GetEventQueryParam) (EventEmbed, error)
+	GetList(q GetEventListQueryParam) ([]EventEmbed, error)
 }
 
 type EventDocumentRepository interface {
@@ -23,9 +26,4 @@ type EventDocumentRepository interface {
 	GetList(q GetDocumentQueryParam) ([]EventDocument, error)
 	Update(id string, p UpdateEventDocumentParam) (EventDocument, error)
 	Delete(id string) error
-}
-
-type Repos struct {
-	Event    EventRepository
-	Document EventDocumentRepository
 }

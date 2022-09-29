@@ -15,7 +15,7 @@ type UpdateEventDocumentParam struct {
 	Url  *string `json:"url"`
 }
 
-func (p UpdateEventDocumentParam) validate(repo Repos, id string, requestUser user.User) error {
+func (p UpdateEventDocumentParam) validate(repo EventDocumentRepository, qs EventQueryService, id string, requestUser user.User) error {
 	/**
 	 * フィールドの検証
 	**/
@@ -39,13 +39,13 @@ func (p UpdateEventDocumentParam) validate(repo Repos, id string, requestUser us
 
 	// 権限の検証
 	if !requestUser.Admin && !requestUser.Manage {
-		ed, err := GetDocument(repo, id, requestUser)
+		ed, err := GetDocument(repo, qs, id, requestUser)
 		if err != nil {
 			return err
 		}
 
 		// Eventを取得
-		e, err := GetEvent(repo, ed.EventId, GetEventQueryParam{}, requestUser)
+		e, err := GetEvent(qs, ed.EventId, GetEventQueryParam{}, requestUser)
 		if err != nil {
 			return err
 		}
@@ -60,18 +60,18 @@ func (p UpdateEventDocumentParam) validate(repo Repos, id string, requestUser us
 	return nil
 }
 
-func UpdateEventDocument(repo Repos, id string, p UpdateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
+func UpdateEventDocument(repo EventDocumentRepository, qs EventQueryService, id string, p UpdateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
 	// 確認
-	_, err = repo.Document.Get(id)
+	_, err = repo.Get(id)
 	if err != nil {
 		return
 	}
 
 	// バリデーション
-	err = p.validate(repo, id, requestUser)
+	err = p.validate(repo, qs, id, requestUser)
 	if err != nil {
 		return
 	}
 
-	return repo.Document.Update(id, p)
+	return repo.Update(id, p)
 }
