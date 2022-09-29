@@ -28,5 +28,5 @@ func (s Server) PostEvents(ctx echo.Context) error {
 		return JSONMessage(ctx, event.ErrToCode(err), err.Error())
 	}
 
-	return JSONPretty(ctx, http.StatusOK, ed)
+	return JSONPretty(ctx, http.StatusCreated, ed)
 }

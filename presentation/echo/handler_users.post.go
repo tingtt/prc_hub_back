@@ -21,5 +21,5 @@ func (s Server) PostUsers(ctx echo.Context) error {
 		return JSONMessage(ctx, user.ErrToCode(err), err.Error())
 	}
 
-	return JSONPretty(ctx, http.StatusOK, uwt)
+	return JSONPretty(ctx, http.StatusCreated, uwt)
 }

@@ -29,5 +29,5 @@ func (s Server) PostEventsIdDocuments(ctx echo.Context, id Id) error {
 		return JSONMessage(ctx, event.ErrToCode(err), err.Error())
 	}
 
-	return JSONPretty(ctx, http.StatusOK, ed)
+	return JSONPretty(ctx, http.StatusCreated, ed)
 }
