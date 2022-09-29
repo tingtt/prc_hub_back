@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"prc_hub_back/application/event"
 	"prc_hub_back/application/oauth2"
 	"prc_hub_back/application/user"
@@ -41,6 +42,26 @@ var (
 func main() {
 	// コマンドライン引数 / 環境変数 の取得
 	flag_with_env.Parse()
+	if *issuer == "" {
+		fmt.Println("`--jwt-issuer` option is required")
+		os.Exit(1)
+	}
+	if *secret == "" {
+		fmt.Println("`--jwt-secret` option is required")
+		os.Exit(1)
+	}
+	if *adminEmail == "" {
+		fmt.Println("`--admin-email` option is required")
+		os.Exit(1)
+	}
+	if *adminPassword == "" {
+		fmt.Println("`--admin-password` option is required")
+		os.Exit(1)
+	}
+	if *frontEndUrl == "" {
+		fmt.Println("`--frontend-url` option is required")
+		os.Exit(1)
+	}
 
 	// Init application services
 	user.InitApplication(repositoryUser)
