@@ -9,7 +9,7 @@ import (
 	"prc_hub_back/application/webhook"
 	"prc_hub_back/domain/model/flag_with_env"
 	"prc_hub_back/domain/model/webhook_line_notify"
-	event_inmemory "prc_hub_back/infrastructure/datasource/event/in_memory"
+	event_mysql "prc_hub_back/infrastructure/datasource/event/mysql"
 	oauth2_inmemory "prc_hub_back/infrastructure/datasource/oauth2/in_memory"
 	user_inmemory "prc_hub_back/infrastructure/datasource/user/in_memory"
 	"prc_hub_back/presentation/echo"
@@ -29,13 +29,19 @@ var (
 	lineNotifyToken    = flag_with_env.String("line-notify-token", "LINE_NOTIFY_TOKEN", "", "LINE notify token")
 	frontEndUrl        = flag_with_env.String("frontend-url", "FRONTEND_URL", "", "Frontend url")
 	allowOrigins       = flag_with_env.Array("allow-origin", "CORS allow origins")
+
+	mysqlHost     = flag_with_env.String("mysql-host", "MYSQL_HOST", "localhost", "")
+	mysqlPort     = flag_with_env.Uint("mysql-port", "MYSQL_PORT", 3306, "")
+	mysqlDB       = flag_with_env.String("mysql-db", "MYSQL_DATABASE", "prc_hub", "")
+	mysqlUser     = flag_with_env.String("mysql-user", "MYSQL_USER", "prc_hub", "")
+	mysqlPassword = flag_with_env.String("mysql-password", "MYSQL_PASSWORD", "", "")
 )
 
 var (
 	repositoryUser            = user_inmemory.Repository{}
 	repositoryOAuth2          = oauth2_inmemory.Repository{}
-	repositoryEvent           = event_inmemory.RepositoryEvent{}
-	queryServiceEvent         = event_inmemory.QueryServiceEvent{}
+	repositoryEvent           = event_mysql.RepositoryEvent{}
+	queryServiceEvent         = event_mysql.QueryServiceEvent{}
 	webhookProviderLineNotify = webhook_line_notify.WebHookLineNotify{}
 )
 
@@ -62,6 +68,9 @@ func main() {
 		fmt.Println("`--frontend-url` option is required")
 		os.Exit(1)
 	}
+
+	// Init repository
+	event_mysql.InitRepository(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
 
 	// Init application services
 	user.InitApplication(repositoryUser)
