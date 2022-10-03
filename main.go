@@ -11,7 +11,7 @@ import (
 	"prc_hub_back/domain/model/webhook_line_notify"
 	event_mysql "prc_hub_back/infrastructure/datasource/event/mysql"
 	oauth2_inmemory "prc_hub_back/infrastructure/datasource/oauth2/in_memory"
-	user_inmemory "prc_hub_back/infrastructure/datasource/user/in_memory"
+	user_mysql "prc_hub_back/infrastructure/datasource/user/mysql"
 	"prc_hub_back/presentation/echo"
 )
 
@@ -38,7 +38,7 @@ var (
 )
 
 var (
-	repositoryUser            = user_inmemory.Repository{}
+	repositoryUser            = user_mysql.Repository{}
 	repositoryOAuth2          = oauth2_inmemory.Repository{}
 	repositoryEvent           = event_mysql.RepositoryEvent{}
 	queryServiceEvent         = event_mysql.QueryServiceEvent{}
@@ -70,6 +70,7 @@ func main() {
 	}
 
 	// Init repository
+	user_mysql.InitRepository(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
 	event_mysql.InitRepository(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
 
 	// Init application services

@@ -16,6 +16,7 @@ var (
 	ErrValidateEmailAlreadyUsed        = user.ErrValidateEmailAlreadyUsed
 	ErrPostEventAvailabledCannotUpdate = user.ErrPostEventAvailabledCannotUpdate
 	ErrManageCannotUpdate              = user.ErrManageCannotUpdate
+	ErrNoUpdates                       = user.ErrNoUpdates
 
 	// 422
 	ErrValidateNameCannotBeEmpty     = user.ErrValidateNameCannotBeEmpty
@@ -32,7 +33,7 @@ func ErrToCode(e error) (code int) {
 	case ErrAdminUserCannnotDelete:
 		// 405
 		return http.StatusMethodNotAllowed
-	case ErrValidateEmailAlreadyUsed, ErrPostEventAvailabledCannotUpdate, ErrManageCannotUpdate:
+	case ErrValidateEmailAlreadyUsed, ErrPostEventAvailabledCannotUpdate, ErrManageCannotUpdate, ErrNoUpdates:
 		// 400
 		return http.StatusBadRequest
 	case ErrValidateNameCannotBeEmpty, ErrValidateEmailCannotBeEmpty, ErrValidatePasswordCannotBeEmpty, ErrValidatePasswordLength:

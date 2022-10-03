@@ -1,15 +1,15 @@
 package user
 
 type User struct {
-	Id                  string  `json:"id"`
-	Name                string  `json:"name"`
-	Email               string  `json:"-"`
-	Password            string  `json:"-"`
-	PostEventAvailabled bool    `json:"post_event_availabled"`
-	Manage              bool    `json:"manage"`
-	Admin               bool    `json:"admin"`
-	TwitterId           *string `json:"twitter_id,omitempty"`
-	GithubUsername      *string `json:"github_username,omitempty"`
+	Id                  string  `json:"id" db:"id"`
+	Name                string  `json:"name" db:"name"`
+	Email               string  `json:"-" db:"email"`
+	Password            string  `json:"-" db:"password"`
+	PostEventAvailabled bool    `json:"post_event_availabled" db:"post_event_availabled"`
+	Manage              bool    `json:"manage" db:"manage"`
+	Admin               bool    `json:"admin" db:"admin"`
+	TwitterId           *string `json:"twitter_id,omitempty" db:"twitter_id"`
+	GithubUsername      *string `json:"github_username,omitempty" db:"github_username"`
 }
 
 type UserWithToken struct {
