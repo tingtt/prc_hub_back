@@ -95,15 +95,15 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 	}
 
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	db, err := OpenMysql()
 	if err != nil {
 		return Event{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
-	defer d.Close()
+	defer db.Close()
 
 	// トランザクション開始
-	tx, err := d.BeginTxx(context.Background(), &sql.TxOptions{})
+	tx, err := db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
 		return Event{}, err
 	}
