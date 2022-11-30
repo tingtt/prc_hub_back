@@ -32,179 +32,83 @@ func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbe
 		}
 	}
 
-	// クエリを作成
-	query :=
-		`WITH params AS ( SELECT ? as event_id )
-		SELECT
-			e.title, e.description, e.location, e.published, e.completed, e.user_id,
-			null, null,
-			null, null, null,`
-	if embedUser {
-		// `users`テーブル結合
-		query +=
-			` u.id, u.name, u.email, u.post_event_availabled, u.manage, u.admin, u.twitter_id, u.github_username`
-	} else {
-		query +=
-			` null, null, null, null, null, null, null, null`
-	}
-	query +=
-		` FROM events e
-		WHERE e.id IN (SELECT event_id FROM params)`
-	if embedUser {
-		// `users`テーブル結合
-		query +=
-			` LEFT JOIN users u ON e.user_id = u.id`
-	}
-	// `event_datetimes`テーブルを結合
-	query +=
-		` UNION ALL
-		SELECT
-			null, null, null, null, null, null,
-			dt.start, dt.end,
-			null, null, null,
-			null, null, null, null, null, null, null, null
-		FROM event_datetimes dt
-		WHERE dt.event_id IN (SELECT event_id FROM params)`
-	if embedDocuments {
-		// `documents`テーブルを結合
-		query +=
-			` UNION ALL
-			SELECT
-				null, null, null, null, null, null,
-				null, null,
-				doc.id, doc.name, doc.url,
-				null, null, null, null, null, null, null, null
-			FROM documents doc
-			WHERE doc.event_id IN (SELECT event_id FROM params)`
-	}
-	// 順序を保証するためにUNION後にソート (nameがNULLではない行を最初に返す)
-	query += " ORDER BY 1 IS NULL ASC"
-
-	// クエリを実行
-	r, err := db.Query(query, id)
+	// `Event`を取得
+	r1, err := db.Query("SELECT * FROM events WHERE id = ?", id)
 	if err != nil {
 		return EventEmbed{}, err
 	}
-	defer r.Close()
-
-	// 読み込み用変数
-	var (
-		e            EventEmbed
-		tmpE         *EventEmbed     = nil
-		tmpDocuments []EventDocument = nil
-	)
-	// `id`に一致した`event`が読み込まれるまで仮のエラーを代入
-	err = ErrEventNotFound
-	// 1行ずつ読込
-	for r.Next() {
-		// カラム読み込み用変数
-		var (
-			eName        *string
-			eDescription *string
-			eLocation    *string
-			ePublished   *bool
-			eCompleted   *bool
-			eUserId      *string
-
-			eDtStart *time.Time
-			eDtEnd   *time.Time
-
-			eDocId   *string
-			eDocName *string
-			eDocUrl  *string
-
-			uId                  *string
-			uName                *string
-			uEmail               *string
-			uPostEventAvailabled *bool
-			uManage              *bool
-			uAdmin               *bool
-			uTwitterId           *string
-			uGithubId            *string
-		)
-		// 変数に読み込み
-		err = r.Scan(
-			&eName, &eDescription, &eLocation, &ePublished, &eCompleted, &eUserId,
-			&eDtStart, &eDtEnd,
-			&eDocId, &eDocName, &eDocUrl,
-			&uId, &uName, &uEmail, &uPostEventAvailabled, &uManage, &uAdmin, &uTwitterId, &uGithubId,
-		)
-		if err != nil {
-			return EventEmbed{}, err
-		}
-		// 読み込んだ内容によって読み込み用変数のそれぞれのフィールドに代入
-		if tmpE == nil {
-			if eName == nil || eUserId == nil {
-				// `id`に一致する`event`が存在しない
-				return EventEmbed{}, err
-			}
-			// Scanしたフィールドを代入
-			tmpE = &EventEmbed{
-				Event: Event{
-					Id:          id,
-					Name:        *eName,
-					Description: eDescription,
-					UserId:      *eUserId,
-				},
-			}
-			if ePublished != nil {
-				tmpE.Published = *ePublished
-			}
-			if eCompleted != nil {
-				tmpE.Completed = *eCompleted
-			}
-			// `id`が一致した`event`が見つかったためエラーを解消
-			err = nil
-
-			if uId != nil && uName != nil && uEmail != nil && uPostEventAvailabled != nil && uManage != nil && uAdmin != nil {
-				// `user`が取得された場合、Scanしたカラムの値を代入
-				tmpE.User = &user.User{
-					Id:                  *uId,
-					Name:                *uName,
-					Email:               *uEmail,
-					PostEventAvailabled: *uPostEventAvailabled,
-					Manage:              *uManage,
-					Admin:               *uAdmin,
-					TwitterId:           uTwitterId,
-					GithubUsername:      uGithubId,
-				}
-			}
-		}
-		if tmpE != nil && eDtStart != nil && eDtEnd != nil {
-			// `event_datetime`が取得された場合、Scanしたカラムの値を代入
-			tmpE.Datetimes = append(
-				tmpE.Datetimes,
-				EventDatetime{
-					Start: *eDtStart,
-					End:   *eDtEnd,
-				},
-			)
-		}
-		if tmpE != nil && eDocId != nil && eDocName != nil && eDocUrl != nil {
-			// `document`が取得された場合、Scanしたカラムの値を代入
-			tmpDocuments = append(
-				tmpDocuments,
-				EventDocument{
-					Id:      *eDocId,
-					Name:    *eDocName,
-					Url:     *eDocUrl,
-					EventId: id,
-				},
-			)
-		}
+	defer r1.Close()
+	if !r1.Next() {
+		// 1行もレコードが無い場合
+		// not found
+		return EventEmbed{}, ErrEventNotFound
 	}
-	// 読み込み用変数を統合
-	tmpE.Documents = &tmpDocuments
-
-	// 権限の検証
-	if !requestUser.Admin && !requestUser.Manage &&
-		!tmpE.Published && tmpE.UserId != requestUser.Id {
-		// `User`が`Admin`・`Manage`のいずれでもなく
-		// `Published`でない 且つ 自分のものでない`Event`は取得不可
-		err = ErrEventNotFound
+	// 一時変数に割当
+	var (
+		id2         string
+		name        string
+		description *string
+		location    *string
+		published   bool
+		completed   bool
+	)
+	err = r1.Scan(&id2, &name, &description, &location, &published, &completed)
+	if err != nil {
 		return EventEmbed{}, err
 	}
 
-	e = *tmpE
-	return e, err
+	// 返り値用変数
+	event := EventEmbed{
+		Event: Event{
+			Id:          id,
+			Name:        name,
+			Description: description,
+			Location:    location,
+			Datetimes:   []EventDatetime{},
+			Published:   published,
+			Completed:   completed,
+			UserId:      id,
+		},
+	}
+
+	// `EventDatetime`を取得
+	r2, err := db.Query("SELECT * FROM event_datetimes WHERE event_id = ?", id)
+	if err != nil {
+		return EventEmbed{}, err
+	}
+	defer r2.Close()
+	for r2.Next() {
+		var (
+			eId   string
+			start *time.Time
+			end   *time.Time
+		)
+		err = r2.Scan(&eId, &start, &end)
+		if err != nil {
+			return EventEmbed{}, err
+		}
+		// 配列に追加
+		event.Event.Datetimes = append(event.Event.Datetimes, EventDatetime{*start, *end})
+	}
+
+	if embedUser {
+		// `User`を取得
+		u, err := user.Get(event.UserId)
+		if err != nil {
+			return EventEmbed{}, err
+		}
+		// 変数に追加
+		event.User = &u
+	}
+
+	if embedDocuments {
+		// `Documents`を取得
+		ed, err := GetDocumentList(GetDocumentQueryParam{EventId: &id})
+		if err != nil {
+			return EventEmbed{}, err
+		}
+		event.Documents = &ed
+	}
+
+	return event, nil
 }
