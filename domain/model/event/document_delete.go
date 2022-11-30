@@ -40,7 +40,7 @@ func DeleteEventDocument(id string, requestUser user.User) error {
 
 	// `id`が一致する行を`documents`テーブルから削除
 	r2, err := db.Exec(
-		`DELETE FROM documents WHERE id = $1`,
+		`DELETE FROM documents WHERE id = ?`,
 		id,
 	)
 	if err != nil {

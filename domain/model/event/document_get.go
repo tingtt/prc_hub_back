@@ -15,12 +15,18 @@ func GetDocument(id string, requestUser user.User) (ed EventDocument, err error)
 
 	// `documents`テーブルから`id`が一致する行を取得し、変数`tmpEd`に代入する
 	var tmpEd EventDocument
-	// TODO: 変数へのアサインをスキャンにする
-	err = db.Get(
-		&tmpEd,
-		`SELECT * FROM documents WHERE id = $1`,
-		id,
-	)
+	r, err := db.Query("SELECT * FROM documents WHERE id = ?", id)
+	if err != nil {
+		return
+	}
+	defer r.Close()
+	if !r.Next() {
+		// 1行もレコードが無い場合
+		// not found
+		err = ErrEventDocumentNotFound
+		return
+	}
+	err = r.Scan(&tmpEd.Id, &tmpEd.EventId, &tmpEd.Name, &tmpEd.Url)
 	if err != nil {
 		return
 	}

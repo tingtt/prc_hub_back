@@ -20,7 +20,10 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	defer d.Close()
 
 	// クエリを作成
-	query := "SELECT * FROM users WHERE"
+	query := `
+		SELECT
+			id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username
+		FROM users WHERE`
 	queryParams := []interface{}{}
 	if q.PostEventAvailabled != nil {
 		// 権限で絞り込み
@@ -51,16 +54,51 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	query = strings.TrimSuffix(query, " WHERE")
 	query = strings.TrimSuffix(query, " AND")
 
-	// `users`テーブルからを取得し、変数`users`に代入する
-	// TODO: Scan
-	var users []User
-	err = d.Get(
-		&users,
-		query,
-		queryParams...,
-	)
+	// `users`テーブルからを取得し
+	r, err := d.Query(query, queryParams...)
 	if err != nil {
 		return nil, err
+	}
+	defer r.Close()
+
+	// 取得したテーブルを１行ずつ処理
+	// 配列`users`に代入する
+	var users []User
+	for r.Next() {
+		// 一時変数に割り当て
+		var (
+			id                  string
+			name                string
+			email               string
+			password            string
+			postEventAvailabled bool
+			manage              bool
+			admin               bool
+			twitterId           *string
+			githubUsername      *string
+		)
+		err = r.Scan(
+			&id, &name, &email, &password, &postEventAvailabled,
+			&manage, &admin, &twitterId, &githubUsername,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// `users`に追加
+		users = append(
+			users,
+			User{id,
+				name,
+				email,
+				password,
+				postEventAvailabled,
+				manage,
+				admin,
+				twitterId,
+				githubUsername,
+			},
+		)
 	}
 
 	return users, nil

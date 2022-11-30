@@ -54,7 +54,7 @@ func main() {
 	// Migrate admin user
 	fmt.Printf("adminEmail: %v\n", *adminEmail)
 	err := user.SaveAdmin(*adminEmail, *adminPassword)
-	if err != nil {
+	if err != nil && err != user.ErrNoUpdates {
 		fmt.Printf("err: %v\n", err)
 		return
 	}

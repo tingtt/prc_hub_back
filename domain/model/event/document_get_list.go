@@ -41,14 +41,25 @@ func GetDocumentList(q GetDocumentQueryParam) ([]EventDocument, error) {
 
 	// `documents`テーブルからを取得し、変数`documents`に代入する
 	var documents []EventDocument
-	// TODO: 変数へのアサインをスキャンにする
-	err = db.Get(
-		&documents,
-		query,
-		queryParams...,
-	)
+	r, err := db.Query(query, queryParams...)
 	if err != nil {
 		return nil, err
+	}
+	defer r.Close()
+	// 1行ずつ読込
+	for r.Next() {
+		// カラム読み込み用変数
+		var (
+			id      string
+			eventId string
+			name    string
+			url     string
+		)
+		err = r.Scan(&id, &eventId, &name, &url)
+		if err != nil {
+			return nil, err
+		}
+		documents = append(documents, EventDocument{id, eventId, name, url})
 	}
 
 	return documents, nil

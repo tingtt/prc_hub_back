@@ -75,7 +75,7 @@ func Update(id string, p UpdateUserParam, requestUser User) (_ UserWithToken, er
 		return
 	}
 
-	// リポジトリか更新対象の`User`を取得
+	// リポジトリから更新対象の`User`を取得
 	_, err = Get(id)
 	if err != nil {
 		return

@@ -72,14 +72,8 @@ func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
 
-	// `documents`テーブルから`id`が一致する行を取得し、変数`tmpEd`に代入する
-	var tmpEd EventDocument
-	// TODO: 変数へのアサインをスキャンにする
-	err = d.Get(
-		&tmpEd,
-		`SELECT * FROM documents WHERE id = $1`,
-		id,
-	)
+	// `documents`テーブルから`id`が一致する行を確認
+	_, err = GetDocument(id, requestUser)
 	if err != nil {
 		return
 	}

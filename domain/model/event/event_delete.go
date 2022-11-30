@@ -37,7 +37,7 @@ func DeleteEvent(id string, requestUser user.User) error {
 
 	// `id`が一致する行を`events`テーブルから削除
 	r2, err := db.Exec(
-		`DELETE FROM events WHERE id = $1`,
+		`DELETE FROM events WHERE id = ?`,
 		id,
 	)
 	if err != nil {

@@ -35,7 +35,7 @@ func DeleteUesr(id string, requestUser User) error {
 
 	// `id`が一致する行を`users`テーブルから削除
 	r2, err := d.Exec(
-		`DELETE FROM users WHERE id = $1`,
+		`DELETE FROM users WHERE id = ?`,
 		id,
 	)
 	if err != nil {

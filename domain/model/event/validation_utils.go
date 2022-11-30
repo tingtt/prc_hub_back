@@ -52,7 +52,7 @@ func validateEventId(id string) error {
 	// TODO: 変数へのアサインをスキャンにする
 	err = db.Get(
 		&tmpEd,
-		`SELECT * FROM events WHERE id = $1`,
+		`SELECT * FROM events WHERE id = ?`,
 		id,
 	)
 	if err != nil {
