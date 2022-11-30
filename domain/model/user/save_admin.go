@@ -61,10 +61,7 @@ func SaveAdmin(email string, password string) error {
 
 		// `users`テーブルに追加
 		_, err = d.Exec(
-			`INSERT INTO users
-				(name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?)`,
+			`INSERT INTO users (name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 			"admin", email, string(hashed), true, true, true, nil, nil,
 		)
 		if err != nil {

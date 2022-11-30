@@ -107,10 +107,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 
 	// `events`テーブルに追加
 	r, err := tx.Exec(
-		`INSERT INTO events
-			(name, description, location, published, completed, user_id)
-		VALUES
-			(?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO events (name, description, location, published, completed, user_id) VALUES (?, ?, ?, ?, ?, ?)`,
 		p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
 	)
 	if err != nil {

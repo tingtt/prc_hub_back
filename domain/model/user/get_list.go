@@ -20,10 +20,7 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	defer d.Close()
 
 	// クエリを作成
-	query := `
-		SELECT
-			id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username
-		FROM users WHERE`
+	query := "SELECT id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username FROM users WHERE"
 	queryParams := []interface{}{}
 	if q.PostEventAvailabled != nil {
 		// 権限で絞り込み

@@ -62,10 +62,7 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 
 	// `users`テーブルに追加
 	r, err := d.Exec(
-		`INSERT INTO users
-			(name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
-		VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO users (name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
 	)
 	if err != nil {

@@ -64,10 +64,7 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (Eve
 
 	// `documents`テーブルに追加
 	r, err := db.Exec(
-		`INSERT INTO documents
-			(event_id, name, url)
-		VALUES
-			(?, ?, ?)`,
+		`INSERT INTO documents (event_id, name, url) VALUES (?, ?, ?)`,
 		p.EventId, p.Name, p.Url,
 	)
 	if err != nil {
