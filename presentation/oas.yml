@@ -424,24 +424,6 @@ paths:
         500:
           description: Internal server error
 
-  /events/{id}/webhook/line_notify:
-    post:
-      summary: イベント情報・アンケートURLの送信
-      description: |
-        アンケートURL・資料URLの送信。
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - $ref: "#/components/parameters/line_notify_scope"
-      responses:
-        200:
-          description: Success
-        400:
-          description: Invalid request
-        404:
-          description: Not found
-        500:
-          description: Internal server error
-
 components:
   schemas:
     User:
@@ -562,40 +544,6 @@ components:
         - name
         - email
         - password
-
-    CreateUserOverOauth2Body:
-      type: object
-      properties:
-        access_token:
-          type: string
-        expire_in:
-          type: integer
-        refresh_token:
-          type: string
-        refresh_token_expire_in:
-          type: integer
-        password:
-          type: string
-          format: password
-          example: prc_hub
-      required:
-        - access_token
-        - expire_in
-        - refresh_token
-        - password
-
-    OAuth2ConnectBody:
-      type: object
-      properties:
-        access_token:
-          type: string
-        refresh_token:
-          type: string
-        refresh_token_expire_in:
-          type: integer
-      required:
-        - access_token
-        - refresh_token
 
     UpdateUserBody:
       type: object
@@ -811,16 +759,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateUserBody"
-    OAuth2ConnectBody:
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/OAuth2ConnectBody"
-    CreateUserOverOauth2Body:
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/CreateUserOverOauth2Body"
     UpdateUserBody:
       content:
         application/json:
@@ -862,23 +800,6 @@ components:
       schema:
         type: string
         example: 1
-    oauth_providers:
-      name: oauth_providers
-      in: path
-      required: true
-      schema:
-        type: string
-        enum:
-          - github
-    line_notify_scope:
-      name: scope
-      in: query
-      schema:
-        type: string
-        enum:
-          - event
-          - document
-        default: event
     name:
       name: name
       in: query

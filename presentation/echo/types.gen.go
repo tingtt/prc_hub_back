@@ -11,12 +11,6 @@ const (
 	BearerScopes = "Bearer.Scopes"
 )
 
-// Defines values for LineNotifyScope.
-const (
-	LineNotifyScopeDocument LineNotifyScope = "document"
-	LineNotifyScopeEvent    LineNotifyScope = "event"
-)
-
 // CreateEventBody defines model for CreateEventBody.
 type CreateEventBody struct {
 	Completed   *bool                  `json:"completed,omitempty"`
@@ -145,9 +139,6 @@ type Embed = []string
 // Id defines model for id.
 type Id = string
 
-// LineNotifyScope defines model for line_notify_scope.
-type LineNotifyScope string
-
 // Location defines model for location.
 type Location = string
 
@@ -185,14 +176,6 @@ type GetEventsIdDocumentsParams struct {
 	Name        *Name        `form:"name,omitempty" json:"name,omitempty"`
 	NameContain *NameContain `form:"name_contain,omitempty" json:"name_contain,omitempty"`
 }
-
-// PostEventsIdWebhookLineNotifyParams defines parameters for PostEventsIdWebhookLineNotify.
-type PostEventsIdWebhookLineNotifyParams struct {
-	Scope *PostEventsIdWebhookLineNotifyParamsScope `form:"scope,omitempty" json:"scope,omitempty"`
-}
-
-// PostEventsIdWebhookLineNotifyParamsScope defines parameters for PostEventsIdWebhookLineNotify.
-type PostEventsIdWebhookLineNotifyParamsScope string
 
 // PostEventsJSONRequestBody defines body for PostEvents for application/json ContentType.
 type PostEventsJSONRequestBody = CreateEventBody

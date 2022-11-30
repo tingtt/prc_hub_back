@@ -43,9 +43,6 @@ type ServerInterface interface {
 	// イベント資料変更
 	// (PATCH /events/{id}/documents/{document_id})
 	PatchEventsIdDocumentsDocumentId(ctx echo.Context, id Id, documentId DocumentId) error
-	// イベント情報・アンケートURLの送信
-	// (POST /events/{id}/webhook/line_notify)
-	PostEventsIdWebhookLineNotify(ctx echo.Context, id Id, params PostEventsIdWebhookLineNotifyParams) error
 	// ユーザー削除
 	// (DELETE /users)
 	DeleteUsers(ctx echo.Context) error
@@ -318,33 +315,6 @@ func (w *ServerInterfaceWrapper) PatchEventsIdDocumentsDocumentId(ctx echo.Conte
 	return err
 }
 
-// PostEventsIdWebhookLineNotify converts echo context to params.
-func (w *ServerInterfaceWrapper) PostEventsIdWebhookLineNotify(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "id" -------------
-	var id Id
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{""})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params PostEventsIdWebhookLineNotifyParams
-	// ------------- Optional query parameter "scope" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "scope", ctx.QueryParams(), &params.Scope)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter scope: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PostEventsIdWebhookLineNotify(ctx, id, params)
-	return err
-}
-
 // DeleteUsers converts echo context to params.
 func (w *ServerInterfaceWrapper) DeleteUsers(ctx echo.Context) error {
 	var err error
@@ -477,7 +447,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.DELETE(baseURL+"/events/:id/documents/:document_id", wrapper.DeleteEventsIdDocumentsDocumentId)
 	router.GET(baseURL+"/events/:id/documents/:document_id", wrapper.GetEventsIdDocumentsDocumentId)
 	router.PATCH(baseURL+"/events/:id/documents/:document_id", wrapper.PatchEventsIdDocumentsDocumentId)
-	router.POST(baseURL+"/events/:id/webhook/line_notify", wrapper.PostEventsIdWebhookLineNotify)
 	router.DELETE(baseURL+"/users", wrapper.DeleteUsers)
 	router.GET(baseURL+"/users", wrapper.GetUsers)
 	router.POST(baseURL+"/users", wrapper.PostUsers)
