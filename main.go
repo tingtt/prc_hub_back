@@ -56,6 +56,7 @@ func main() {
 	err := user.SaveAdmin(*adminEmail, *adminPassword)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
+		return
 	}
 
 	echo.Start(*port, *logLevel, *gzipLevel, *issuer, *secret, *allowOrigins)
