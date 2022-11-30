@@ -13,7 +13,7 @@ type (
 	GetEventQueryParam     = event.GetEventQueryParam
 )
 
-func CreateEvent(p CreateEventParam, requestUserId string) (event.Event, error) {
+func CreateEvent(p CreateEventParam, requestUserId int64) (event.Event, error) {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -23,7 +23,7 @@ func CreateEvent(p CreateEventParam, requestUserId string) (event.Event, error) 
 	return event.CreateEvent(p, u)
 }
 
-func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (event.EventEmbed, error) {
+func GetEvent(id int64, q GetEventQueryParam, requestUserId *int64) (event.EventEmbed, error) {
 	u := new(userDomain.User)
 
 	if requestUserId != nil {
@@ -37,7 +37,7 @@ func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (event.Eve
 	} else if requestUserId == nil {
 		// リクエストユーザーが指定されていない場合は最小権限のユーザーを仮使用
 		u = &userDomain.User{
-			Id:                  "",
+			Id:                  0,
 			PostEventAvailabled: false,
 			Manage:              false,
 			Admin:               false,
@@ -47,7 +47,7 @@ func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (event.Eve
 	return event.GetEvent(id, q, *u)
 }
 
-func GetEventList(q GetEventListQueryParam, requestUserId *string) ([]event.EventEmbed, error) {
+func GetEventList(q GetEventListQueryParam, requestUserId *int64) ([]event.EventEmbed, error) {
 	u := new(userDomain.User)
 
 	if requestUserId != nil {
@@ -61,7 +61,7 @@ func GetEventList(q GetEventListQueryParam, requestUserId *string) ([]event.Even
 	} else if requestUserId == nil {
 		// リクエストユーザーが指定されていない場合は最小権限のユーザーを仮使用
 		u = &userDomain.User{
-			Id:                  "",
+			Id:                  0,
 			PostEventAvailabled: false,
 			Manage:              false,
 			Admin:               false,
@@ -71,7 +71,7 @@ func GetEventList(q GetEventListQueryParam, requestUserId *string) ([]event.Even
 	return event.GetEventList(q, *u)
 }
 
-func UpdateEvent(id string, p UpdateEventParam, requestUserId string) (event.Event, error) {
+func UpdateEvent(id int64, p UpdateEventParam, requestUserId int64) (event.Event, error) {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -81,7 +81,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUserId string) (event.Eve
 	return event.UpdateEvent(id, p, u)
 }
 
-func DeleteEvent(id string, requestUserId string) error {
+func DeleteEvent(id int64, requestUserId int64) error {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {

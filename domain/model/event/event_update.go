@@ -24,7 +24,7 @@ type UpdateEventParam struct {
 	Completed   *bool                       `json:"completed,omitempty"`
 }
 
-func (p UpdateEventParam) validate(id string, requestUser user.User) error {
+func (p UpdateEventParam) validate(id int64, requestUser user.User) error {
 	/**
 	 * フィールドの検証
 	**/
@@ -73,7 +73,7 @@ func (p UpdateEventParam) validate(id string, requestUser user.User) error {
 	return nil
 }
 
-func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (Event, error) {
+func UpdateEvent(id int64, p UpdateEventParam, requestUser user.User) (Event, error) {
 	// バリデーション
 	err := p.validate(id, requestUser)
 	if err != nil {
@@ -184,7 +184,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (Event, e
 				`INSERT INTO event_datetimes
 					(event_id, start, end)
 				VALUES
-					(%s, :start, :end)`,
+					(%d, :start, :end)`,
 				id,
 			),
 			p.Datetimes,

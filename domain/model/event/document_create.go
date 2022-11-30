@@ -3,7 +3,6 @@ package event
 import (
 	"errors"
 	"prc_hub_back/domain/model/user"
-	"prc_hub_back/domain/model/util"
 )
 
 // Errors
@@ -12,7 +11,7 @@ var (
 )
 
 type CreateEventDocumentParam struct {
-	EventId string `json:"event_id"`
+	EventId int64  `json:"event_id"`
 	Name    string `json:"name"`
 	Url     string `json:"url"`
 }
@@ -63,24 +62,26 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (Eve
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
 
-	// TODO: UUID -> LastInsertedId()
-	e := EventDocument{
-		Id:      util.UUID(),
-		EventId: p.EventId,
-		Name:    p.Name,
-		Url:     p.Url,
-	}
-
 	// `documents`テーブルに追加
-	_, err = db.NamedExec(
+	r, err := db.Exec(
 		`INSERT INTO documents
-			(id, event_id, name, url)
+			(event_id, name, url)
 		VALUES
-			(:id, :event_id, :name, :url)`,
-		e,
+			(?, ?, ?)`,
+		p.EventId, p.Name, p.Url,
 	)
 	if err != nil {
 		return EventDocument{}, err
+	}
+	id, err := r.LastInsertId()
+	if err != nil {
+		return EventDocument{}, err
+	}
+	e := EventDocument{
+		Id:      id,
+		EventId: p.EventId,
+		Name:    p.Name,
+		Url:     p.Url,
 	}
 
 	return e, nil

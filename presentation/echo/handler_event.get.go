@@ -11,7 +11,7 @@ import (
 // (GET /events/{id})
 func (s Server) GetEventsId(ctx echo.Context, id Id, params GetEventsIdParams) error {
 	// Get jwt claim
-	var jwtId *string
+	var jwtId *int64
 	jcc, err := jwt.Check(ctx)
 	if err == nil {
 		jwtId = &jcc.Id

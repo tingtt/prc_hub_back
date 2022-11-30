@@ -3,7 +3,7 @@ package event
 import "strings"
 
 type GetDocumentQueryParam struct {
-	EventId     *string `query:"event_id"`
+	EventId     *int64  `query:"event_id"`
 	Name        *string `query:"name"`
 	NameContain *string `query:"name_contain"`
 }
@@ -50,8 +50,8 @@ func GetDocumentList(q GetDocumentQueryParam) ([]EventDocument, error) {
 	for r.Next() {
 		// カラム読み込み用変数
 		var (
-			id      string
-			eventId string
+			id      int64
+			eventId int64
 			name    string
 			url     string
 		)

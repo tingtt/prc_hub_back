@@ -168,10 +168,10 @@ paths:
                 items:
                   $ref: "#/components/schemas/Event"
                 example:
-                  - id: "1"
+                  - id: 1
                     name: ITシステムの構造
                     user:
-                      id: "1"
+                      id: 1
                       name: "prc_hub_user"
                       email: "user@prchub.com"
                       github_username: ecc-proken
@@ -191,13 +191,13 @@ paths:
                     published: true
                     completed: true
                     documents:
-                      - id: "1"
+                      - id: 1
                         name: スライド
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
-                  - id: "2"
+                  - id: 2
                     name: Git/GitHubハンズオン
                     user:
-                      id: "1"
+                      id: 1
                       name: "prc_hub_user"
                       email: "user@prchub.com"
                       github_username: ecc-proken
@@ -217,16 +217,16 @@ paths:
                     published: true
                     completed: true
                     documents:
-                      - id: "1"
+                      - id: 1
                         name: スライド
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/slide.pdf
-                      - id: "2"
+                      - id: 2
                         name: ハンズオン資料
                         url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/DOCUMENT.md
-                  - id: "3"
+                  - id: 3
                     name: Webサーバハンズオン
                     user:
-                      id: "1"
+                      id: 1
                       name: "prc_hub_user"
                       email: "user@prchub.com"
                       github_username: ecc-proken
@@ -430,7 +430,8 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
         name:
           type: string
           example: prc_hub_user
@@ -480,7 +481,8 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
         name:
           type: string
           example: prc_hub_user
@@ -575,7 +577,8 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
         name:
           type: string
           example: ITシステムの構造
@@ -710,7 +713,8 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
         name:
           type: string
           example: スライド
@@ -791,14 +795,16 @@ components:
       in: path
       required: true
       schema:
-        type: string
+        type: integer
+        format: int64
         example: 1
     document_id:
       name: document_id
       in: path
       required: true
       schema:
-        type: string
+        type: integer
+        format: int64
         example: 1
     name:
       name: name

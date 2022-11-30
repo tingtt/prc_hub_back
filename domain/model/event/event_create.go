@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"prc_hub_back/domain/model/user"
-	"prc_hub_back/domain/model/util"
 	"time"
 )
 
@@ -82,18 +81,6 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 		})
 	}
 
-	// TODO: UUID -> LastInsertedId()
-	e := Event{
-		Id:          util.UUID(),
-		Name:        p.Name,
-		Description: p.Description,
-		Location:    p.Location,
-		Datetimes:   datetimes,
-		Published:   p.Published,
-		Completed:   p.Completed,
-		UserId:      requestUser.Id,
-	}
-
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
@@ -120,13 +107,17 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 	}()
 
 	// `events`テーブルに追加
-	_, err = tx.NamedExec(
+	r, err := tx.Exec(
 		`INSERT INTO events
-			(id, name, description, location, published, completed, user_id)
+			(name, description, location, published, completed, user_id)
 		VALUES
-			(:id, :name, :description, :location, :published, :completed, :user_id)`,
-		e,
+			(?, ?, ?, ?, ?, ?)`,
+		p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
 	)
+	if err != nil {
+		return Event{}, err
+	}
+	id, err := r.LastInsertId()
 	if err != nil {
 		return Event{}, err
 	}
@@ -138,14 +129,24 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 			`INSERT INTO event_datetimes
 				(event_id, start, end)
 			VALUES
-				("%s", :start, :end)`,
-			e.Id,
+				("%d", :start, :end)`,
+			id,
 		),
-		e.Datetimes,
+		datetimes,
 	)
 	if err != nil {
 		return Event{}, err
 	}
 
+	e := Event{
+		Id:          id,
+		Name:        p.Name,
+		Description: p.Description,
+		Location:    p.Location,
+		Datetimes:   datetimes,
+		Published:   p.Published,
+		Completed:   p.Completed,
+		UserId:      requestUser.Id,
+	}
 	return e, nil
 }

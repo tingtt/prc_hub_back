@@ -1,6 +1,6 @@
 package user
 
-func Get(id string) (User, error) {
+func Get(id int64) (User, error) {
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
@@ -24,7 +24,7 @@ func Get(id string) (User, error) {
 
 	// 一時変数に割り当て
 	var (
-		id2                 string
+		id2                 int64
 		name                string
 		email               string
 		password            string
@@ -82,7 +82,7 @@ func GetByEmail(email string) (User, error) {
 
 	// 一時変数に割り当て
 	var (
-		id                  string
+		id                  int64
 		name                string
 		email2              string
 		password            string

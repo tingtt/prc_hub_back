@@ -9,7 +9,7 @@ type GetEventQueryParam struct {
 	Embed *[]string `query:"embed"`
 }
 
-func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbed, error) {
+func GetEvent(id int64, q GetEventQueryParam, requestUser user.User) (EventEmbed, error) {
 	// Get event
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
@@ -45,14 +45,15 @@ func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbe
 	}
 	// 一時変数に割当
 	var (
-		id2         string
+		id2         int64
 		name        string
 		description *string
 		location    *string
 		published   bool
 		completed   bool
+		userId      int64
 	)
-	err = r1.Scan(&id2, &name, &description, &location, &published, &completed)
+	err = r1.Scan(&id2, &name, &description, &location, &published, &completed, &userId)
 	if err != nil {
 		return EventEmbed{}, err
 	}
@@ -67,7 +68,7 @@ func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbe
 			Datetimes:   []EventDatetime{},
 			Published:   published,
 			Completed:   completed,
-			UserId:      id,
+			UserId:      userId,
 		},
 	}
 

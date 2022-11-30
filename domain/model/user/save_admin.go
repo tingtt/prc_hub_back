@@ -1,8 +1,6 @@
 package user
 
 import (
-	"prc_hub_back/domain/model/util"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -52,20 +50,6 @@ func SaveAdmin(email string, password string) error {
 			return err
 		}
 
-		// `User`追加
-		// TODO: UUID -> LastInsertedId()
-		u := User{
-			Id:                  util.UUID(),
-			Name:                "admin",
-			Email:               email,
-			Password:            string(hashed),
-			PostEventAvailabled: true,
-			Manage:              true,
-			Admin:               true,
-			TwitterId:           nil,
-			GithubUsername:      nil,
-		}
-
 		// リポジトリに追加
 		// MySQLサーバーに接続
 		d, err := OpenMysql()
@@ -76,12 +60,12 @@ func SaveAdmin(email string, password string) error {
 		defer d.Close()
 
 		// `users`テーブルに追加
-		_, err = d.NamedExec(
+		_, err = d.Exec(
 			`INSERT INTO users
-				(id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
+				(name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
 			VALUES
-				(:id, :name, :email, :password, :post_event_availabled, :manage, :admin, :twitter_id, :github_username)`,
-			u,
+				(?, ?, ?, ?, ?, ?, ?, ?)`,
+			"admin", email, string(hashed), true, true, true, nil, nil,
 		)
 		if err != nil {
 			return err

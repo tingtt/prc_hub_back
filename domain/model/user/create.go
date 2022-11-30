@@ -2,7 +2,6 @@ package user
 
 import (
 	"prc_hub_back/domain/model/jwt"
-	"prc_hub_back/domain/model/util"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -52,19 +51,6 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 		p.GithubUsername = nil
 	}
 
-	// TODO: UUID -> LastInsertedId()
-	u := User{
-		Id:                  util.UUID(),
-		Name:                p.Name,
-		Email:               p.Email,
-		Password:            string(hashed),
-		PostEventAvailabled: false,
-		Manage:              false,
-		Admin:               false,
-		TwitterId:           p.TwitterId,
-		GithubUsername:      p.GithubUsername,
-	}
-
 	// リポジトリに追加
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
@@ -75,15 +61,30 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 	defer d.Close()
 
 	// `users`テーブルに追加
-	_, err = d.NamedExec(
+	r, err := d.Exec(
 		`INSERT INTO users
-			(id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
+			(name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
 		VALUES
-			(:id, :name, :email, :password, :post_event_availabled, :manage, :admin, :twitter_id, :github_username)`,
-		u,
+			(?, ?, ?, ?, ?, ?, ?, ?)`,
+		p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
 	)
 	if err != nil {
 		return UserWithToken{}, err
+	}
+	id, err := r.LastInsertId()
+	if err != nil {
+		return UserWithToken{}, err
+	}
+	u := User{
+		Id:                  id,
+		Name:                p.Name,
+		Email:               p.Email,
+		Password:            string(hashed),
+		PostEventAvailabled: false,
+		Manage:              false,
+		Admin:               false,
+		TwitterId:           p.TwitterId,
+		GithubUsername:      p.GithubUsername,
 	}
 
 	// jwtを生成

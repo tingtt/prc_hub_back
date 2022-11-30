@@ -67,7 +67,7 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	for r.Next() {
 		// 一時変数に割り当て
 		var (
-			id                  string
+			id                  int64
 			name                string
 			email               string
 			password            string
@@ -85,7 +85,7 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 			return nil, err
 		}
 
-		// `users`に追加
+		// 配列に追加
 		users = append(
 			users,
 			User{id,

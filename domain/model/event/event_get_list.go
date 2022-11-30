@@ -85,13 +85,13 @@ func GetEventList(q GetEventListQueryParam, requestUser user.User) ([]EventEmbed
 	for r1.Next() {
 		// 一時変数に割当
 		var (
-			id          string
+			id          int64
 			name        string
 			description *string
 			location    *string
 			published   bool
 			completed   bool
-			userId      string
+			userId      int64
 		)
 		err = r1.Scan(&id, &name, &description, &location, &published, &completed, &userId)
 		if err != nil {

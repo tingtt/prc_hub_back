@@ -18,14 +18,14 @@ var (
 )
 
 type jwtCustumClaims struct {
-	Id    string `json:"id"`
+	Id    int64  `json:"id"`
 	Email string `json:"email"`
 	Admin bool   `json:"admin"`
 	jwt.StandardClaims
 }
 
 type GenerateTokenParam struct {
-	Id    string
+	Id    int64
 	Email string
 	Admin bool
 }
