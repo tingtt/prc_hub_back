@@ -7,13 +7,7 @@ type (
 )
 
 func Create(p CreateUserParam) (_ user.UserWithToken, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	return user.CreateUser(
-		repository,
 		user.CreateUserParam{
 			Name:           p.Name,
 			Email:          p.Email,

@@ -7,9 +7,9 @@ var (
 	ErrAdminUserCannnotDelete = errors.New("cannot delete admin user")
 )
 
-func DeleteUesr(repo UserRepository, id string, requestUser User) error {
+func DeleteUesr(id string, requestUser User) error {
 	// リポジトリから削除対象の`User`を取得
-	u, err := Get(repo, id)
+	u, err := Get(id)
 	if err != nil {
 		return err
 	}
@@ -25,5 +25,29 @@ func DeleteUesr(repo UserRepository, id string, requestUser User) error {
 	}
 
 	// リポジトリから`User`を削除
-	return repo.Delete(id)
+	// MySQLサーバーに接続
+	d, err := OpenMysql()
+	if err != nil {
+		return err
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer d.Close()
+
+	// `id`が一致する行を`users`テーブルから削除
+	r2, err := d.Exec(
+		`DELETE FROM users WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+	var a int64
+	if a, err = r2.RowsAffected(); err != nil || a != 1 {
+		if err != nil {
+			return err
+		}
+		// `id`に一致する`usersが存在しない
+		return ErrUserNotFound
+	}
+	return nil
 }

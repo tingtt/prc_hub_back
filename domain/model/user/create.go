@@ -15,12 +15,12 @@ type CreateUserParam struct {
 	GithubUsername *string `json:"github_username,omitempty"`
 }
 
-func (p CreateUserParam) validate(repo UserRepository) error {
+func (p CreateUserParam) validate() error {
 	err := validateName(p.Name)
 	if err != nil {
 		return err
 	}
-	err = validateEmail(repo, p.Email)
+	err = validateEmail(p.Email)
 	if err != nil {
 		return err
 	}
@@ -31,9 +31,9 @@ func (p CreateUserParam) validate(repo UserRepository) error {
 	return nil
 }
 
-func CreateUser(repo UserRepository, p CreateUserParam) (_ UserWithToken, err error) {
+func CreateUser(p CreateUserParam) (_ UserWithToken, err error) {
 	// バリデーション
-	err = p.validate(repo)
+	err = p.validate()
 	if err != nil {
 		return
 	}
@@ -52,8 +52,7 @@ func CreateUser(repo UserRepository, p CreateUserParam) (_ UserWithToken, err er
 		p.GithubUsername = nil
 	}
 
-	// リポジトリに追加
-	u, err := repo.Add(User{
+	u := User{
 		Id:                  util.UUID(),
 		Name:                p.Name,
 		Email:               p.Email,
@@ -63,7 +62,25 @@ func CreateUser(repo UserRepository, p CreateUserParam) (_ UserWithToken, err er
 		Admin:               false,
 		TwitterId:           p.TwitterId,
 		GithubUsername:      p.GithubUsername,
-	})
+	}
+
+	// リポジトリに追加
+	// MySQLサーバーに接続
+	d, err := OpenMysql()
+	if err != nil {
+		return
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer d.Close()
+
+	// `users`テーブルに追加
+	_, err = d.NamedExec(
+		`INSERT INTO users
+			(id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username)
+		VALUES
+			(:id, :name, :email, :password, :post_event_availabled, :manage, :admin, :twitter_id, :github_username)`,
+		u,
+	)
 	if err != nil {
 		return
 	}

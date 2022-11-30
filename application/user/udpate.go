@@ -7,19 +7,13 @@ type (
 )
 
 func Update(id string, p UpdateUserParam, requestUserId string) (_ user.UserWithToken, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := Get(requestUserId)
 	if err != nil {
 		return
 	}
 
-	return user.UpdateUser(
-		repository,
+	return user.Update(
 		id,
 		user.UpdateUserParam{
 			Name:                p.Name,

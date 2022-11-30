@@ -19,13 +19,14 @@ func validateName(name string) error {
 	return nil
 }
 
-func validateEmail(repo UserRepository, email string) error {
+func validateEmail(email string) error {
 	// 空文字チェック
 	if email == "" {
 		return ErrValidateEmailCannotBeEmpty
 	}
 	// 重複チェック
-	_, err := repo.GetByEmail(email)
+
+	_, err := GetByEmail(email)
 	if err == nil || err != ErrUserNotFound {
 		return ErrValidateEmailAlreadyUsed
 	}

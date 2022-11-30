@@ -5,18 +5,11 @@ import (
 	"prc_hub_back/domain/model/user"
 )
 
-// Singleton fields
-var (
-	initialized = false
-	repository  user.UserRepository
-)
-
 // Errors
 var (
 	ErrRepositoryNotInitialized = errors.New("repository not initialized")
 )
 
-func InitApplication(repo user.UserRepository) {
-	initialized = true
-	repository = repo
+func Init(u string, password string, host string, port uint, db string) {
+	user.InitRepository(u, password, host, port, db)
 }
