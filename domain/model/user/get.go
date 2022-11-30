@@ -14,6 +14,7 @@ func Get(id string) (User, error) {
 	if err != nil {
 		return User{}, err
 	}
+	defer r.Close()
 	if !r.Next() {
 		// 1行もレコードが無い場合
 		// not found
@@ -72,6 +73,7 @@ func GetByEmail(email string) (User, error) {
 	if err != nil {
 		return User{}, err
 	}
+	defer r.Close()
 	if !r.Next() {
 		// 1行もレコードが無い場合
 		// not found
