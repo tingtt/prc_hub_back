@@ -43,14 +43,14 @@ func DeleteEvent(id string, requestUser user.User) error {
 	if err != nil {
 		return err
 	}
-	var a int64
-	if a, err = r2.RowsAffected(); err != nil || a != 1 {
-		if err != nil {
-			return err
-		}
-		// `id`に一致する`event`が存在しない
-		err = ErrEventNotFound
+	i, err := r2.RowsAffected()
+	if err != nil {
 		return err
+	}
+	if i != 1 {
+		// 変更された行数が1ではない場合
+		// `id`に一致する`document`が存在しない
+		return ErrEventNotFound
 	}
 
 	return nil

@@ -6,11 +6,11 @@ type (
 	UpdateUserParam user.UpdateUserParam
 )
 
-func Update(id string, p UpdateUserParam, requestUserId string) (_ user.UserWithToken, err error) {
+func Update(id string, p UpdateUserParam, requestUserId string) (user.UserWithToken, error) {
 	// リクエスト元のユーザーを取得
 	u, err := Get(requestUserId)
 	if err != nil {
-		return
+		return user.UserWithToken{}, err
 	}
 
 	return user.Update(

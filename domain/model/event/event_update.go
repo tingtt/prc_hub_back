@@ -73,17 +73,17 @@ func (p UpdateEventParam) validate(id string, requestUser user.User) error {
 	return nil
 }
 
-func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event, err error) {
+func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (Event, error) {
 	// バリデーション
-	err = p.validate(id, requestUser)
+	err := p.validate(id, requestUser)
 	if err != nil {
-		return
+		return Event{}, err
 	}
 
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
-		return
+		return Event{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
@@ -91,7 +91,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event,
 	// トランザクション開始
 	tx, err := db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return
+		return Event{}, err
 	}
 	defer func() {
 		// return時にトランザクションの後処理
@@ -145,7 +145,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event,
 	if strings.HasSuffix(query1, "SET") {
 		// 更新するフィールドが無いため中断
 		err = ErrNoUpdates
-		return
+		return Event{}, err
 	}
 	// 不要な末尾の句を切り取り
 	query1 = strings.TrimSuffix(query1, ",")
@@ -153,16 +153,16 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event,
 	// `events`テーブルの`id`が一致する行を更新
 	r2, err := tx.Exec(query1+" WHERE id = ?", append(queryParams1, id))
 	if err != nil {
-		return
+		return Event{}, err
 	}
-	var a int64
-	if a, err = r2.RowsAffected(); err != nil || a != 1 {
-		if err != nil {
-			return
-		}
+	i, err := r2.RowsAffected()
+	if err != nil {
+		return Event{}, err
+	}
+	if i != 1 {
+		// 変更された行数が1ではない場合
 		// `id`に一致する`event`が存在しない
-		err = ErrEventDocumentNotFound
-		return
+		return Event{}, ErrEventNotFound
 	}
 
 	if p.Datetimes != nil {
@@ -174,7 +174,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event,
 			id,
 		)
 		if err != nil {
-			return
+			return Event{}, err
 		}
 
 		// 新規データの追加
@@ -190,11 +190,15 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event,
 			p.Datetimes,
 		)
 		if err != nil {
-			return
+			return Event{}, err
 		}
 	}
 
 	// 更新後のデータを取得
 	ee, err := GetEvent(id, GetEventQueryParam{}, requestUser)
-	return ee.Event, err
+	if err != nil {
+		return Event{}, err
+	}
+
+	return ee.Event, nil
 }

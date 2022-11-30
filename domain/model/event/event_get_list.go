@@ -16,11 +16,11 @@ type GetEventListQueryParam struct {
 	Embed           *[]string `query:"embed"`
 }
 
-func GetEventList(q GetEventListQueryParam, requestUser user.User) (events []EventEmbed, err error) {
+func GetEventList(q GetEventListQueryParam, requestUser user.User) ([]EventEmbed, error) {
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
-		return
+		return nil, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
@@ -127,12 +127,13 @@ func GetEventList(q GetEventListQueryParam, requestUser user.User) (events []Eve
 	// クエリを実行
 	r, err := db.Query(query, queryParams...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	defer r.Close()
 
 	// 読み込み用変数
 	var (
+		events       []EventEmbed    = []EventEmbed{}
 		tmpEvent     *EventEmbed     = nil
 		tmpDocuments []EventDocument = nil
 	)
@@ -172,14 +173,14 @@ func GetEventList(q GetEventListQueryParam, requestUser user.User) (events []Eve
 			&uId, &uName, &uEmail, &uPostEventAvailabled, &uManage, &uAdmin, &uTwitterId, &uGithubId,
 		)
 		if err != nil {
-			return
+			return nil, err
 		}
 		// 読み込んだ内容によって読み込み用変数のそれぞれのフィールドに代入
 		if tmpEvent == nil || tmpEvent.Id != eId {
 			if eName == nil || eUserId == nil {
 				// 想定外の値なため処理を中断
 				err = errors.New("invalid column set of row")
-				return
+				return nil, err
 			}
 			if tmpEvent != nil {
 				// 読込中の`event`が存在する場合は、結果用配列に追加

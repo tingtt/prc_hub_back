@@ -31,17 +31,17 @@ func (p CreateUserParam) validate() error {
 	return nil
 }
 
-func CreateUser(p CreateUserParam) (_ UserWithToken, err error) {
+func CreateUser(p CreateUserParam) (UserWithToken, error) {
 	// バリデーション
-	err = p.validate()
+	err := p.validate()
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	// パスワードをハッシュ化
 	hashed, err := bcrypt.GenerateFromPassword([]byte(p.Password), 10)
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	// ""(空文字)を`null`に置き換え
@@ -69,7 +69,7 @@ func CreateUser(p CreateUserParam) (_ UserWithToken, err error) {
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
@@ -83,14 +83,14 @@ func CreateUser(p CreateUserParam) (_ UserWithToken, err error) {
 		u,
 	)
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	// jwtを生成
 	uwt := UserWithToken{User: u}
 	uwt.Token, err = jwt.GenerateToken(jwt.GenerateTokenParam{Id: u.Id, Email: u.Email, Admin: u.Admin})
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	return uwt, nil

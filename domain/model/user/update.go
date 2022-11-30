@@ -67,31 +67,30 @@ func (p UpdateUserParam) validate(id string, requestUser User) error {
 	return nil
 }
 
-func Update(id string, p UpdateUserParam, requestUser User) (_ UserWithToken, err error) {
+func Update(id string, p UpdateUserParam, requestUser User) (UserWithToken, error) {
 	// 権限の検証
 	if requestUser.Id != id && !requestUser.Admin {
 		// Admin権限なし 且つ IDが自分ではない場合は削除不可
-		err = ErrUserNotFound
-		return
+		return UserWithToken{}, ErrUserNotFound
 	}
 
 	// リポジトリから更新対象の`User`を取得
-	_, err = Get(id)
+	_, err := Get(id)
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	// バリデーション
 	err = p.validate(id, requestUser)
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	// リポジトリ内の`User`を更新
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
@@ -146,35 +145,37 @@ func Update(id string, p UpdateUserParam, requestUser User) (_ UserWithToken, er
 	// 更新するフィールドがあるか確認
 	if strings.HasSuffix(query, "SET") {
 		// 更新するフィールドが無いため中断
-		err = ErrNoUpdates
-		return
+		return UserWithToken{}, ErrNoUpdates
 	}
 	// 不要な末尾の句を切り取り
 	query = strings.TrimSuffix(query, ",")
 
 	// `users`テーブルの`id`が一致する行を更新
 	r2, err := d.Exec(query+" WHERE id = ?", append(queryParams, id))
-	var a int64
-	if a, err = r2.RowsAffected(); err != nil || a != 1 {
-		if err != nil {
-			return
-		}
+	if err != nil {
+		return UserWithToken{}, err
+	}
+	i, err := r2.RowsAffected()
+	if err != nil {
+		return UserWithToken{}, err
+	}
+	if i != 1 {
+		// 変更された行数が1ではない場合
 		// `id`に一致する`uesr`が存在しない
-		err = ErrUserNotFound
-		return
+		return UserWithToken{}, ErrUserNotFound
 	}
 
 	// 更新後のデータを取得
 	u, err := Get(id)
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	// jwtを生成
 	uwt := UserWithToken{User: u}
 	uwt.Token, err = jwt.GenerateToken(jwt.GenerateTokenParam{Id: u.Id, Email: u.Email, Admin: u.Admin})
 	if err != nil {
-		return
+		return UserWithToken{}, err
 	}
 
 	return uwt, nil

@@ -27,7 +27,7 @@ func (p CreateEventDocumentParam) validate(requestUser user.User) error {
 	if err != nil {
 		return err
 	}
-	err = validateEventId(p.EventId)
+	err = validateEventId(p.EventId, requestUser)
 	if err != nil {
 		return err
 	}
@@ -49,16 +49,16 @@ func (p CreateEventDocumentParam) validate(requestUser user.User) error {
 	return nil
 }
 
-func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
-	err = p.validate(requestUser)
+func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (EventDocument, error) {
+	err := p.validate(requestUser)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
@@ -80,7 +80,7 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (_ E
 		e,
 	)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 
 	return e, nil

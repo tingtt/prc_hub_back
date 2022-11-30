@@ -9,12 +9,12 @@ type GetEventQueryParam struct {
 	Embed *[]string `query:"embed"`
 }
 
-func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (e EventEmbed, err error) {
+func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbed, error) {
 	// Get event
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
-		return
+		return EventEmbed{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
@@ -83,12 +83,13 @@ func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (e EventEm
 	// クエリを実行
 	r, err := db.Query(query, id)
 	if err != nil {
-		return
+		return EventEmbed{}, err
 	}
 	defer r.Close()
 
 	// 読み込み用変数
 	var (
+		e            EventEmbed
 		tmpE         *EventEmbed     = nil
 		tmpDocuments []EventDocument = nil
 	)
@@ -129,13 +130,13 @@ func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (e EventEm
 			&uId, &uName, &uEmail, &uPostEventAvailabled, &uManage, &uAdmin, &uTwitterId, &uGithubId,
 		)
 		if err != nil {
-			return
+			return EventEmbed{}, err
 		}
 		// 読み込んだ内容によって読み込み用変数のそれぞれのフィールドに代入
 		if tmpE == nil {
 			if eName == nil || eUserId == nil {
 				// `id`に一致する`event`が存在しない
-				return
+				return EventEmbed{}, err
 			}
 			// Scanしたフィールドを代入
 			tmpE = &EventEmbed{
@@ -201,9 +202,9 @@ func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (e EventEm
 		// `User`が`Admin`・`Manage`のいずれでもなく
 		// `Published`でない 且つ 自分のものでない`Event`は取得不可
 		err = ErrEventNotFound
-		return
+		return EventEmbed{}, err
 	}
 
 	e = *tmpE
-	return
+	return e, err
 }

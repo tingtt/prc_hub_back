@@ -41,12 +41,13 @@ func DeleteUesr(id string, requestUser User) error {
 	if err != nil {
 		return err
 	}
-	var a int64
-	if a, err = r2.RowsAffected(); err != nil || a != 1 {
-		if err != nil {
-			return err
-		}
-		// `id`に一致する`usersが存在しない
+	i, err := r2.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if i != 1 {
+		// 削除された行数が1ではない場合
+		// `id`に一致する`uesr`が存在しない
 		return ErrUserNotFound
 	}
 	return nil

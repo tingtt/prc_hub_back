@@ -6,6 +6,6 @@ func Get(id string) (_ user.User, err error) {
 	return user.Get(id)
 }
 
-func GetByEmail(email string) (_ user.User, err error) {
+func GetByEmail(email string) (user.User, error) {
 	return user.GetByEmail(email)
 }

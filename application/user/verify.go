@@ -7,12 +7,15 @@ import (
 func Verify(email string, password string) (token string, verify bool, err error) {
 	u, err := GetByEmail(email)
 	if err != nil {
-		return
+		return "", false, err
 	}
 	verify, err = u.Verify(password)
 	if err != nil {
-		return
+		return "", false, err
 	}
 	token, err = jwt.GenerateToken(jwt.GenerateTokenParam{Id: u.Id, Email: u.Email, Admin: u.Admin})
-	return
+	if err != nil {
+		return "", false, err
+	}
+	return token, verify, nil
 }

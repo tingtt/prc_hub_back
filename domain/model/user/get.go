@@ -1,10 +1,10 @@
 package user
 
-func Get(id string) (u User, err error) {
+func Get(id string) (User, error) {
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
-		return
+		return User{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
@@ -12,13 +12,13 @@ func Get(id string) (u User, err error) {
 	// `users`テーブルから`id`が一致する行を取得し、変数`e`に代入する
 	r, err := d.Query("SELECT * FROM users WHERE id = ?", id)
 	if err != nil {
-		return
+		return User{}, err
 	}
 	if !r.Next() {
 		// 1行もレコードが無い場合
 		// not found
 		err = ErrUserNotFound
-		return
+		return User{}, err
 	}
 
 	// 一時変数に割り当て
@@ -38,42 +38,44 @@ func Get(id string) (u User, err error) {
 		&manage, &admin, &twitterId, &githubUsername,
 	)
 	if err != nil {
-		return
+		return User{}, err
 	}
 
-	return User{
-			id,
-			name,
-			email,
-			password,
-			postEventAvailabled,
-			manage,
-			admin,
-			twitterId,
-			githubUsername,
-		},
-		nil
+	u := User{
+		id,
+		name,
+		email,
+		password,
+		postEventAvailabled,
+		manage,
+		admin,
+		twitterId,
+		githubUsername,
+	}
+	return u, nil
 }
 
-func GetByEmail(email string) (u User, err error) {
+func GetByEmail(email string) (User, error) {
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
-		return
+		return User{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
 
 	// `users`テーブルから`id`が一致する行を取得し、変数`e`に代入する
-	r, err := d.Query("SELECT * FROM users WHERE email = ?", email)
+	r, err := d.Query(
+		"SELECT * FROM users WHERE email = ?",
+		email,
+	)
 	if err != nil {
-		return
+		return User{}, err
 	}
 	if !r.Next() {
 		// 1行もレコードが無い場合
 		// not found
-		err = ErrUserNotFound
-		return
+		return User{}, ErrUserNotFound
 	}
 
 	// 一時変数に割り当て
@@ -93,19 +95,19 @@ func GetByEmail(email string) (u User, err error) {
 		&manage, &admin, &twitterId, &githubUsername,
 	)
 	if err != nil {
-		return
+		return User{}, err
 	}
 
-	return User{
-			id,
-			name,
-			email,
-			password,
-			postEventAvailabled,
-			manage,
-			admin,
-			twitterId,
-			githubUsername,
-		},
-		nil
+	u := User{
+		id,
+		name,
+		email,
+		password,
+		postEventAvailabled,
+		manage,
+		admin,
+		twitterId,
+		githubUsername,
+	}
+	return u, nil
 }

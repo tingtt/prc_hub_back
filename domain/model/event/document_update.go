@@ -61,13 +61,11 @@ func (p UpdateEventDocumentParam) validate(id string, requestUser user.User) err
 	return nil
 }
 
-func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
-	// 確認
-
+func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user.User) (EventDocument, error) {
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
@@ -75,19 +73,19 @@ func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user
 	// `documents`テーブルから`id`が一致する行を確認
 	_, err = GetDocument(id, requestUser)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 
 	// バリデーション
 	err = p.validate(id, requestUser)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
@@ -108,8 +106,7 @@ func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user
 	// 更新するフィールドがあるか確認
 	if strings.HasSuffix(query, "SET") {
 		// 更新するフィールドが無いため中断
-		err = ErrNoUpdates
-		return
+		return EventDocument{}, ErrNoUpdates
 	}
 	// 不要な末尾の句を切り取り
 	query = strings.TrimSuffix(query, ",")
@@ -117,18 +114,23 @@ func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user
 	// `documents`テーブルの`id`が一致する行を更新
 	r2, err := db.Exec(query+" WHERE id = ?", append(queryParams, id))
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
-	var a int64
-	if a, err = r2.RowsAffected(); err != nil || a != 1 {
-		if err != nil {
-			return
-		}
+	i, err := r2.RowsAffected()
+	if err != nil {
+		return EventDocument{}, err
+	}
+	if i != 1 {
+		// 変更された行数が1ではない場合
 		// `id`に一致する`document`が存在しない
-		err = ErrEventDocumentNotFound
-		return
+		return EventDocument{}, ErrEventDocumentNotFound
 	}
 
 	// 更新後のデータを取得
-	return GetDocument(id, requestUser)
+	ed, err := GetDocument(id, requestUser)
+	if err != nil {
+		return EventDocument{}, err
+	}
+
+	return ed, nil
 }

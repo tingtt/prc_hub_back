@@ -6,7 +6,7 @@ type (
 	CreateUserParam user.CreateUserParam
 )
 
-func Create(p CreateUserParam) (_ user.UserWithToken, err error) {
+func Create(p CreateUserParam) (user.UserWithToken, error) {
 	return user.CreateUser(
 		user.CreateUserParam{
 			Name:           p.Name,

@@ -2,39 +2,38 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func GetDocument(id string, requestUser user.User) (ed EventDocument, err error) {
+func GetDocument(id string, requestUser user.User) (EventDocument, error) {
 	// Get document
 
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
 
-	// `documents`テーブルから`id`が一致する行を取得し、変数`tmpEd`に代入する
-	var tmpEd EventDocument
+	// `documents`テーブルから`id`が一致する行を取得し、変数`ed`に代入する
+	var ed EventDocument
 	r, err := db.Query("SELECT * FROM documents WHERE id = ?", id)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 	defer r.Close()
 	if !r.Next() {
 		// 1行もレコードが無い場合
 		// not found
-		err = ErrEventDocumentNotFound
-		return
+		return EventDocument{}, ErrEventDocumentNotFound
 	}
-	err = r.Scan(&tmpEd.Id, &tmpEd.EventId, &tmpEd.Name, &tmpEd.Url)
+	err = r.Scan(&ed.Id, &ed.EventId, &ed.Name, &ed.Url)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 
 	// Get event
-	e, err := GetEvent(tmpEd.EventId, GetEventQueryParam{}, requestUser)
+	e, err := GetEvent(ed.EventId, GetEventQueryParam{}, requestUser)
 	if err != nil {
-		return
+		return EventDocument{}, err
 	}
 
 	// 権限の検証
@@ -42,10 +41,8 @@ func GetDocument(id string, requestUser user.User) (ed EventDocument, err error)
 		!e.Published && e.UserId != requestUser.Id {
 		// `User`が`Admin`・`Manage`のいずれでもなく
 		// `Published`でない 且つ 自分のものでない`Event`は取得不可
-		err = ErrEventDocumentNotFound
-		return
+		return EventDocument{}, ErrEventDocumentNotFound
 	}
 
-	ed = tmpEd
-	return
+	return ed, nil
 }

@@ -67,11 +67,11 @@ func (p CreateEventParam) validate(requestUser user.User) error {
 	return nil
 }
 
-func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error) {
+func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 	// バリデーション
-	err = p.validate(requestUser)
+	err := p.validate(requestUser)
 	if err != nil {
-		return
+		return Event{}, err
 	}
 
 	var datetimes []EventDatetime
@@ -97,7 +97,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error)
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
 	if err != nil {
-		return
+		return Event{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
 	defer d.Close()
@@ -105,7 +105,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error)
 	// トランザクション開始
 	tx, err := d.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return
+		return Event{}, err
 	}
 	defer func() {
 		// return時にトランザクションの後処理
@@ -128,7 +128,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error)
 		e,
 	)
 	if err != nil {
-		return
+		return Event{}, err
 	}
 
 	// `event_datetimes`テーブルに追加
@@ -144,7 +144,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error)
 		e.Datetimes,
 	)
 	if err != nil {
-		return
+		return Event{}, err
 	}
 
 	return e, nil

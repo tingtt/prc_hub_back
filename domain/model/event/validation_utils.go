@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"prc_hub_back/domain/model/user"
 	"time"
 )
 
@@ -38,7 +39,7 @@ func validateUrl(url string) error {
 	return nil
 }
 
-func validateEventId(id string) error {
+func validateEventId(id string, requestUser user.User) error {
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {
@@ -47,14 +48,8 @@ func validateEventId(id string) error {
 	// return時にMySQLサーバーとの接続を閉じる
 	defer db.Close()
 
-	// `documents`テーブルから`id`が一致する行を取得し、変数`tmpEd`に代入する
-	var tmpEd EventDocument
-	// TODO: 変数へのアサインをスキャンにする
-	err = db.Get(
-		&tmpEd,
-		`SELECT * FROM events WHERE id = ?`,
-		id,
-	)
+	// `documents`テーブルから`id`が一致する行を確認
+	_, err = GetDocument(id, requestUser)
 	if err != nil {
 		return err
 	}
