@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"prc_hub_back/domain/model/user"
 	"time"
 )
@@ -96,7 +95,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 	}
 	defer func() {
 		// return時にトランザクションの後処理
-		//* 102行目の`defer`より先に実行される
+		//* 90行目の`defer`より先に実行される
 		if err != nil {
 			// 失敗時はロールバック
 			tx.Rollback()
@@ -123,19 +122,14 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 	}
 
 	// `event_datetimes`テーブルに追加
-	// TODO: for文にする
-	_, err = tx.NamedExec(
-		fmt.Sprintf(
-			`INSERT INTO event_datetimes
-				(event_id, start, end)
-			VALUES
-				("%d", :start, :end)`,
-			id,
-		),
-		datetimes,
-	)
-	if err != nil {
-		return Event{}, err
+	for _, dt := range datetimes {
+		_, err = tx.Exec(
+			"INSERT INTO event_datetimes (event_id, start, end) VALUES (?, ?, ?)",
+			id, dt.Start, dt.End,
+		)
+		if err != nil {
+			return Event{}, err
+		}
 	}
 
 	e := Event{

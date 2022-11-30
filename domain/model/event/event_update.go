@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"prc_hub_back/domain/model/user"
 	"prc_hub_back/domain/model/util"
 	"strings"
@@ -178,19 +177,15 @@ func UpdateEvent(id int64, p UpdateEventParam, requestUser user.User) (Event, er
 		}
 
 		// 新規データの追加
-		// TODO: for文にする
-		_, err = db.NamedExec(
-			fmt.Sprintf(
-				`INSERT INTO event_datetimes
-					(event_id, start, end)
-				VALUES
-					(%d, :start, :end)`,
-				id,
-			),
-			p.Datetimes,
-		)
-		if err != nil {
-			return Event{}, err
+		// `event_datetimes`テーブルに追加
+		for _, dt := range *p.Datetimes {
+			_, err = tx.Exec(
+				"INSERT INTO event_datetimes (event_id, start, end) VALUES (?, ?, ?)",
+				id, dt.Start, dt.End,
+			)
+			if err != nil {
+				return Event{}, err
+			}
 		}
 	}
 
