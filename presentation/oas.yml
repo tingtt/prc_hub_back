@@ -148,51 +148,6 @@ paths:
         500:
           description: Internal server error
 
-  /users/oauth2/{oauth_providers}/register:
-    post:
-      security: []
-      parameters:
-        - $ref: "#/components/parameters/oauth_providers"
-      requestBody:
-        $ref: "#/components/requestBodies/CreateUserOverOauth2Body"
-      responses:
-        201:
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserWithToken"
-        404:
-          description: Not found
-        500:
-          description: Internal server error
-
-  /users/oauth2/{oauth_providers}:
-    post:
-      parameters:
-        - $ref: "#/components/parameters/oauth_providers"
-      requestBody:
-        $ref: "#/components/requestBodies/OAuth2ConnectBody"
-      responses:
-        200:
-          description: Success
-        401:
-          description: Unauthorized
-        404:
-          description: Not found
-        500:
-          description: Internal server error
-    delete:
-      parameters:
-        - $ref: "#/components/parameters/oauth_providers"
-      responses:
-        204:
-          description: Deleted
-        404:
-          description: Not found
-        500:
-          description: Internal server error
-
   /events:
     get:
       summary: イベント一覧

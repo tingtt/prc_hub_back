@@ -17,11 +17,6 @@ const (
 	LineNotifyScopeEvent    LineNotifyScope = "event"
 )
 
-// Defines values for OauthProviders.
-const (
-	Github OauthProviders = "github"
-)
-
 // CreateEventBody defines model for CreateEventBody.
 type CreateEventBody struct {
 	Completed   *bool                  `json:"completed,omitempty"`
@@ -51,15 +46,6 @@ type CreateUserBody struct {
 	Name           string              `json:"name"`
 	Password       string              `json:"password"`
 	TwitterId      *string             `json:"twitter_id,omitempty"`
-}
-
-// CreateUserOverOauth2Body defines model for CreateUserOverOauth2Body.
-type CreateUserOverOauth2Body struct {
-	AccessToken          string `json:"access_token"`
-	ExpireIn             int    `json:"expire_in"`
-	Password             string `json:"password"`
-	RefreshToken         string `json:"refresh_token"`
-	RefreshTokenExpireIn *int   `json:"refresh_token_expire_in,omitempty"`
 }
 
 // Event defines model for Event.
@@ -94,13 +80,6 @@ type LoginBody struct {
 	Password string              `json:"password"`
 }
 
-// OAuth2ConnectBody defines model for OAuth2ConnectBody.
-type OAuth2ConnectBody struct {
-	AccessToken          string `json:"access_token"`
-	RefreshToken         string `json:"refresh_token"`
-	RefreshTokenExpireIn *int   `json:"refresh_token_expire_in,omitempty"`
-}
-
 // Token defines model for Token.
 type Token struct {
 	Token string `json:"token"`
@@ -124,9 +103,9 @@ type UpdateEventDocumentBody struct {
 
 // UpdateUserBody defines model for UpdateUserBody.
 type UpdateUserBody struct {
-	Admin               *bool   `json:"admin,omitempty"`
 	Email               *string `json:"email,omitempty"`
 	GithubUsername      *string `json:"github_username,omitempty"`
+	Manage              *bool   `json:"manage,omitempty"`
 	Name                *string `json:"name,omitempty"`
 	Password            *string `json:"password,omitempty"`
 	PostEventAvailabled *bool   `json:"post_event_availabled,omitempty"`
@@ -139,6 +118,7 @@ type User struct {
 	Email               openapi_types.Email `json:"email"`
 	GithubUsername      *string             `json:"github_username,omitempty"`
 	Id                  string              `json:"id"`
+	Manage              bool                `json:"manage"`
 	Name                string              `json:"name"`
 	PostEventAvailabled bool                `json:"post_event_availabled"`
 	TwitterId           *string             `json:"twitter_id,omitempty"`
@@ -180,9 +160,6 @@ type Name = string
 // NameContain defines model for name_contain.
 type NameContain = string
 
-// OauthProviders defines model for oauth_providers.
-type OauthProviders string
-
 // GetEventsParams defines parameters for GetEvents.
 type GetEventsParams struct {
 	Name            *Name            `form:"name,omitempty" json:"name,omitempty"`
@@ -217,15 +194,6 @@ type PostEventsIdWebhookLineNotifyParams struct {
 // PostEventsIdWebhookLineNotifyParamsScope defines parameters for PostEventsIdWebhookLineNotify.
 type PostEventsIdWebhookLineNotifyParamsScope string
 
-// DeleteUsersOauth2OauthProvidersParamsOauthProviders defines parameters for DeleteUsersOauth2OauthProviders.
-type DeleteUsersOauth2OauthProvidersParamsOauthProviders string
-
-// PostUsersOauth2OauthProvidersParamsOauthProviders defines parameters for PostUsersOauth2OauthProviders.
-type PostUsersOauth2OauthProvidersParamsOauthProviders string
-
-// PostUsersOauth2OauthProvidersRegisterParamsOauthProviders defines parameters for PostUsersOauth2OauthProvidersRegister.
-type PostUsersOauth2OauthProvidersRegisterParamsOauthProviders string
-
 // PostEventsJSONRequestBody defines body for PostEvents for application/json ContentType.
 type PostEventsJSONRequestBody = CreateEventBody
 
@@ -240,12 +208,6 @@ type PatchEventsIdDocumentsDocumentIdJSONRequestBody = UpdateEventDocumentBody
 
 // PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
 type PostUsersJSONRequestBody = CreateUserBody
-
-// PostUsersOauth2OauthProvidersJSONRequestBody defines body for PostUsersOauth2OauthProviders for application/json ContentType.
-type PostUsersOauth2OauthProvidersJSONRequestBody = OAuth2ConnectBody
-
-// PostUsersOauth2OauthProvidersRegisterJSONRequestBody defines body for PostUsersOauth2OauthProvidersRegister for application/json ContentType.
-type PostUsersOauth2OauthProvidersRegisterJSONRequestBody = CreateUserOverOauth2Body
 
 // PostUsersSignInJSONRequestBody defines body for PostUsersSignIn for application/json ContentType.
 type PostUsersSignInJSONRequestBody = LoginBody

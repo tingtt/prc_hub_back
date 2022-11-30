@@ -31,17 +31,6 @@ CREATE TABLE `users` (
 );
 
 --
--- Table structure for table `oauth2_tokens`
---
-CREATE TABLE `oauth2_tokens` (
-  `user_id` varchar(255) NOT NULL,
-  `provider` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `owner_id` varchar(255) NOT NULL,
-  PRIMARY KEY (`user_id`, `provider`)
-);
-
---
 -- Table structure for table `events`
 --
 CREATE TABLE `events` (

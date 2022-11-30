@@ -55,15 +55,6 @@ type ServerInterface interface {
 	// ユーザー登録
 	// (POST /users)
 	PostUsers(ctx echo.Context) error
-
-	// (DELETE /users/oauth2/{oauth_providers})
-	DeleteUsersOauth2OauthProviders(ctx echo.Context, oauthProviders DeleteUsersOauth2OauthProvidersParamsOauthProviders) error
-
-	// (POST /users/oauth2/{oauth_providers})
-	PostUsersOauth2OauthProviders(ctx echo.Context, oauthProviders PostUsersOauth2OauthProvidersParamsOauthProviders) error
-
-	// (POST /users/oauth2/{oauth_providers}/register)
-	PostUsersOauth2OauthProvidersRegister(ctx echo.Context, oauthProviders PostUsersOauth2OauthProvidersRegisterParamsOauthProviders) error
 	// サインイン
 	// (POST /users/sign_in)
 	PostUsersSignIn(ctx echo.Context) error
@@ -385,58 +376,6 @@ func (w *ServerInterfaceWrapper) PostUsers(ctx echo.Context) error {
 	return err
 }
 
-// DeleteUsersOauth2OauthProviders converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteUsersOauth2OauthProviders(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "oauth_providers" -------------
-	var oauthProviders DeleteUsersOauth2OauthProvidersParamsOauthProviders
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "oauth_providers", runtime.ParamLocationPath, ctx.Param("oauth_providers"), &oauthProviders)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter oauth_providers: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{""})
-
-	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteUsersOauth2OauthProviders(ctx, oauthProviders)
-	return err
-}
-
-// PostUsersOauth2OauthProviders converts echo context to params.
-func (w *ServerInterfaceWrapper) PostUsersOauth2OauthProviders(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "oauth_providers" -------------
-	var oauthProviders PostUsersOauth2OauthProvidersParamsOauthProviders
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "oauth_providers", runtime.ParamLocationPath, ctx.Param("oauth_providers"), &oauthProviders)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter oauth_providers: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{""})
-
-	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PostUsersOauth2OauthProviders(ctx, oauthProviders)
-	return err
-}
-
-// PostUsersOauth2OauthProvidersRegister converts echo context to params.
-func (w *ServerInterfaceWrapper) PostUsersOauth2OauthProvidersRegister(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "oauth_providers" -------------
-	var oauthProviders PostUsersOauth2OauthProvidersRegisterParamsOauthProviders
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "oauth_providers", runtime.ParamLocationPath, ctx.Param("oauth_providers"), &oauthProviders)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter oauth_providers: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PostUsersOauth2OauthProvidersRegister(ctx, oauthProviders)
-	return err
-}
-
 // PostUsersSignIn converts echo context to params.
 func (w *ServerInterfaceWrapper) PostUsersSignIn(ctx echo.Context) error {
 	var err error
@@ -542,9 +481,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.DELETE(baseURL+"/users", wrapper.DeleteUsers)
 	router.GET(baseURL+"/users", wrapper.GetUsers)
 	router.POST(baseURL+"/users", wrapper.PostUsers)
-	router.DELETE(baseURL+"/users/oauth2/:oauth_providers", wrapper.DeleteUsersOauth2OauthProviders)
-	router.POST(baseURL+"/users/oauth2/:oauth_providers", wrapper.PostUsersOauth2OauthProviders)
-	router.POST(baseURL+"/users/oauth2/:oauth_providers/register", wrapper.PostUsersOauth2OauthProvidersRegister)
 	router.POST(baseURL+"/users/sign_in", wrapper.PostUsersSignIn)
 	router.DELETE(baseURL+"/users/:id", wrapper.DeleteUsersId)
 	router.GET(baseURL+"/users/:id", wrapper.GetUsersId)
