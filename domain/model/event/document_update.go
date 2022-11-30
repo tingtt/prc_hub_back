@@ -62,16 +62,8 @@ func (p UpdateEventDocumentParam) validate(id string, requestUser user.User) err
 }
 
 func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user.User) (EventDocument, error) {
-	// MySQLサーバーに接続
-	d, err := OpenMysql()
-	if err != nil {
-		return EventDocument{}, err
-	}
-	// return時にMySQLサーバーとの接続を閉じる
-	defer d.Close()
-
 	// `documents`テーブルから`id`が一致する行を確認
-	_, err = GetDocument(id, requestUser)
+	_, err := GetDocument(id, requestUser)
 	if err != nil {
 		return EventDocument{}, err
 	}
