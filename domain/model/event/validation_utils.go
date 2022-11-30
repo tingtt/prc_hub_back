@@ -38,9 +38,27 @@ func validateUrl(url string) error {
 	return nil
 }
 
-func validateEventId(qs EventQueryService, id string) error {
-	_, err := qs.Get(id, GetEventQueryParam{})
-	return err
+func validateEventId(id string) error {
+	// MySQLサーバーに接続
+	db, err := OpenMysql()
+	if err != nil {
+		return err
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer db.Close()
+
+	// `documents`テーブルから`id`が一致する行を取得し、変数`tmpEd`に代入する
+	var tmpEd EventDocument
+	// TODO: 変数へのアサインをスキャンにする
+	err = db.Get(
+		&tmpEd,
+		`SELECT * FROM events WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func validateEventDatetime(start time.Time, end time.Time) error {

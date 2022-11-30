@@ -14,26 +14,16 @@ type (
 )
 
 func CreateEvent(p CreateEventParam, requestUserId string) (_ event.Event, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
 		return
 	}
 
-	return event.CreateEvent(repo, p, u)
+	return event.CreateEvent(p, u)
 }
 
 func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (_ event.EventEmbed, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	u := new(userDomain.User)
 
 	if requestUserId != nil {
@@ -55,7 +45,6 @@ func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (_ event.E
 	}
 
 	return event.GetEvent(
-		queryService,
 		id,
 		q,
 		*u,
@@ -63,11 +52,6 @@ func GetEvent(id string, q GetEventQueryParam, requestUserId *string) (_ event.E
 }
 
 func GetEventList(q GetEventListQueryParam, requestUserId *string) (events []event.EventEmbed, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	u := new(userDomain.User)
 
 	if requestUserId != nil {
@@ -89,18 +73,12 @@ func GetEventList(q GetEventListQueryParam, requestUserId *string) (events []eve
 	}
 
 	return event.GetEventList(
-		queryService,
 		q,
 		*u,
 	)
 }
 
 func UpdateEvent(id string, p UpdateEventParam, requestUserId string) (_ event.Event, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -108,8 +86,6 @@ func UpdateEvent(id string, p UpdateEventParam, requestUserId string) (_ event.E
 	}
 
 	return event.UpdateEvent(
-		repo,
-		queryService,
 		id,
 		p,
 		u,
@@ -117,10 +93,6 @@ func UpdateEvent(id string, p UpdateEventParam, requestUserId string) (_ event.E
 }
 
 func DeleteEvent(id string, requestUserId string) error {
-	if !initialized {
-		return ErrRepositoryNotInitialized
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -128,8 +100,6 @@ func DeleteEvent(id string, requestUserId string) error {
 	}
 
 	return event.DeleteEvent(
-		repo,
-		queryService,
 		id,
 		u,
 	)

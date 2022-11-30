@@ -17,7 +17,7 @@ type CreateEventDocumentParam struct {
 	Url     string `json:"url"`
 }
 
-func (p CreateEventDocumentParam) validate(repo EventRepository, qs EventQueryService, requestUser user.User) error {
+func (p CreateEventDocumentParam) validate(requestUser user.User) error {
 	// フィールドの検証
 	err := validateDocumentName(p.Name)
 	if err != nil {
@@ -27,7 +27,7 @@ func (p CreateEventDocumentParam) validate(repo EventRepository, qs EventQuerySe
 	if err != nil {
 		return err
 	}
-	err = validateEventId(qs, p.EventId)
+	err = validateEventId(p.EventId)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (p CreateEventDocumentParam) validate(repo EventRepository, qs EventQuerySe
 	// 権限の検証
 	if !requestUser.Admin && !requestUser.Manage {
 		// Eventを取得
-		e, err := GetEvent(qs, p.EventId, GetEventQueryParam{}, requestUser)
+		e, err := GetEvent(p.EventId, GetEventQueryParam{}, requestUser)
 		if err != nil {
 			return err
 		}
@@ -49,16 +49,39 @@ func (p CreateEventDocumentParam) validate(repo EventRepository, qs EventQuerySe
 	return nil
 }
 
-func CreateEventDocument(repo EventRepository, qs EventQueryService, p CreateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
-	err = p.validate(repo, qs, requestUser)
+func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (_ EventDocument, err error) {
+	err = p.validate(requestUser)
 	if err != nil {
 		return
 	}
 
-	return repo.AddDocument(EventDocument{
+	// MySQLサーバーに接続
+	db, err := OpenMysql()
+	if err != nil {
+		return
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer db.Close()
+
+	// TODO: UUID -> LastInsertedId()
+	e := EventDocument{
 		Id:      util.UUID(),
 		EventId: p.EventId,
 		Name:    p.Name,
 		Url:     p.Url,
-	})
+	}
+
+	// `documents`テーブルに追加
+	_, err = db.NamedExec(
+		`INSERT INTO documents
+			(id, event_id, name, url)
+		VALUES
+			(:id, :event_id, :name, :url)`,
+		e,
+	)
+	if err != nil {
+		return
+	}
+
+	return e, nil
 }

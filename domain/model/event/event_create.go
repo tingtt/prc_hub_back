@@ -1,7 +1,10 @@
 package event
 
 import (
+	"context"
+	"database/sql"
 	"errors"
+	"fmt"
 	"prc_hub_back/domain/model/user"
 	"prc_hub_back/domain/model/util"
 	"time"
@@ -64,7 +67,7 @@ func (p CreateEventParam) validate(requestUser user.User) error {
 	return nil
 }
 
-func CreateEvent(repo EventRepository, p CreateEventParam, requestUser user.User) (_ Event, err error) {
+func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error) {
 	// バリデーション
 	err = p.validate(requestUser)
 	if err != nil {
@@ -79,7 +82,7 @@ func CreateEvent(repo EventRepository, p CreateEventParam, requestUser user.User
 		})
 	}
 
-	return repo.Add(Event{
+	e := Event{
 		Id:          util.UUID(),
 		Name:        p.Name,
 		Description: p.Description,
@@ -88,5 +91,60 @@ func CreateEvent(repo EventRepository, p CreateEventParam, requestUser user.User
 		Published:   p.Published,
 		Completed:   p.Completed,
 		UserId:      requestUser.Id,
-	})
+	}
+
+	// MySQLサーバーに接続
+	d, err := OpenMysql()
+	if err != nil {
+		return
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer d.Close()
+
+	// トランザクション開始
+	tx, err := d.BeginTxx(context.Background(), &sql.TxOptions{})
+	if err != nil {
+		return
+	}
+	defer func() {
+		// return時にトランザクションの後処理
+		//* 102行目の`defer`より先に実行される
+		if err != nil {
+			// 失敗時はロールバック
+			tx.Rollback()
+		} else {
+			// 成功時はコミット
+			tx.Commit()
+		}
+	}()
+
+	// `events`テーブルに追加
+	_, err = tx.NamedExec(
+		`INSERT INTO events
+			(id, name, description, location, published, completed, user_id)
+		VALUES
+			(:id, :name, :description, :location, :published, :completed, :user_id)`,
+		e,
+	)
+	if err != nil {
+		return
+	}
+
+	// `event_datetimes`テーブルに追加
+	// TODO: for文にする
+	_, err = tx.NamedExec(
+		fmt.Sprintf(
+			`INSERT INTO event_datetimes
+				(event_id, start, end)
+			VALUES
+				("%s", :start, :end)`,
+			e.Id,
+		),
+		e.Datetimes,
+	)
+	if err != nil {
+		return
+	}
+
+	return e, nil
 }

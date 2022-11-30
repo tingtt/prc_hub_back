@@ -10,10 +10,9 @@ var (
 	ErrCannotDeleteEvent = errors.New("sorry, you cannot delete this event")
 )
 
-func DeleteEvent(repo EventRepository, qs EventQueryService, id string, requestUser user.User) error {
+func DeleteEvent(id string, requestUser user.User) error {
 	// Get event
 	e, err := GetEvent(
-		qs,
 		id,
 		GetEventQueryParam{},
 		requestUser,
@@ -28,5 +27,31 @@ func DeleteEvent(repo EventRepository, qs EventQueryService, id string, requestU
 		return ErrCannotDeleteEvent
 	}
 
-	return repo.Delete(id)
+	// MySQLサーバーに接続
+	db, err := OpenMysql()
+	if err != nil {
+		return err
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer db.Close()
+
+	// `id`が一致する行を`events`テーブルから削除
+	r2, err := db.Exec(
+		`DELETE FROM events WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+	var a int64
+	if a, err = r2.RowsAffected(); err != nil || a != 1 {
+		if err != nil {
+			return err
+		}
+		// `id`に一致する`event`が存在しない
+		err = ErrEventNotFound
+		return err
+	}
+
+	return nil
 }

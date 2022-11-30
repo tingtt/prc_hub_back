@@ -1,16 +1,10 @@
-package event_mysql
+package event
 
 import (
 	"errors"
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-)
-
-type (
-	RepositoryEvent   struct{}
-	QueryServiceEvent struct{}
 )
 
 // Singleton field
@@ -21,7 +15,7 @@ func InitRepository(user string, password string, host string, port uint, db str
 }
 
 // MySQLサーバーに接続
-func Open() (*sqlx.DB, error) {
+func OpenMysql() (*sqlx.DB, error) {
 	if dsn == "" {
 		return nil, errors.New("dsn does not set")
 	}

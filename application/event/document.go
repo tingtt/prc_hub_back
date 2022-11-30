@@ -12,11 +12,6 @@ type (
 )
 
 func CreateDocument(p CreateEventDocumentParam, requestUserId string) (_ event.EventDocument, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -24,8 +19,6 @@ func CreateDocument(p CreateEventDocumentParam, requestUserId string) (_ event.E
 	}
 
 	return event.CreateEventDocument(
-		repo,
-		queryService,
 		event.CreateEventDocumentParam{
 			EventId: p.EventId,
 			Name:    p.Name,
@@ -36,11 +29,6 @@ func CreateDocument(p CreateEventDocumentParam, requestUserId string) (_ event.E
 }
 
 func GetDocument(id string, requestUserId string) (_ event.EventDocument, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -48,20 +36,13 @@ func GetDocument(id string, requestUserId string) (_ event.EventDocument, err er
 	}
 
 	return event.GetDocument(
-		repo,
-		queryService,
 		id,
 		u,
 	)
 }
 
 func GetDocumentList(q GetDocumentQueryParam, requestUserId string) (documents []event.EventDocument, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
 	return event.GetDocumentList(
-		repo,
 		event.GetDocumentQueryParam{
 			EventId:     q.EventId,
 			Name:        q.Name,
@@ -71,11 +52,6 @@ func GetDocumentList(q GetDocumentQueryParam, requestUserId string) (documents [
 }
 
 func UpdateDocument(id string, p UpdateEventDocumentParam, requestUserId string) (_ event.EventDocument, err error) {
-	if !initialized {
-		err = ErrRepositoryNotInitialized
-		return
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -83,8 +59,6 @@ func UpdateDocument(id string, p UpdateEventDocumentParam, requestUserId string)
 	}
 
 	return event.UpdateEventDocument(
-		repo,
-		queryService,
 		id,
 		event.UpdateEventDocumentParam{
 			Name: p.Name,
@@ -95,10 +69,6 @@ func UpdateDocument(id string, p UpdateEventDocumentParam, requestUserId string)
 }
 
 func DeleteDocument(id string, requestUserId string) error {
-	if !initialized {
-		return ErrRepositoryNotInitialized
-	}
-
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -106,8 +76,6 @@ func DeleteDocument(id string, requestUserId string) error {
 	}
 
 	return event.DeleteEventDocument(
-		repo,
-		queryService,
 		id,
 		u,
 	)

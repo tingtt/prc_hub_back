@@ -2,15 +2,31 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func GetDocument(repo EventRepository, qs EventQueryService, id string, requestUser user.User) (ed EventDocument, err error) {
+func GetDocument(id string, requestUser user.User) (ed EventDocument, err error) {
 	// Get document
-	tmpEd, err := repo.GetDocument(id)
+
+	// MySQLサーバーに接続
+	db, err := OpenMysql()
+	if err != nil {
+		return
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer db.Close()
+
+	// `documents`テーブルから`id`が一致する行を取得し、変数`tmpEd`に代入する
+	var tmpEd EventDocument
+	// TODO: 変数へのアサインをスキャンにする
+	err = db.Get(
+		&tmpEd,
+		`SELECT * FROM documents WHERE id = $1`,
+		id,
+	)
 	if err != nil {
 		return
 	}
 
 	// Get event
-	e, err := GetEvent(qs, tmpEd.EventId, GetEventQueryParam{}, requestUser)
+	e, err := GetEvent(tmpEd.EventId, GetEventQueryParam{}, requestUser)
 	if err != nil {
 		return
 	}

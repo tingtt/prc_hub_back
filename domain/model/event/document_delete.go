@@ -10,15 +10,15 @@ var (
 	ErrCannotDeleteEventDocument = errors.New("sorry, you cannot delete this document")
 )
 
-func DeleteEventDocument(repo EventRepository, qs EventQueryService, id string, requestUser user.User) error {
+func DeleteEventDocument(id string, requestUser user.User) error {
 	// Get document
-	ed, err := GetDocument(repo, qs, id, requestUser)
+	ed, err := GetDocument(id, requestUser)
 	if err != nil {
 		return err
 	}
 
 	// Get event
-	e, err := GetEvent(qs, ed.EventId, GetEventQueryParam{}, requestUser)
+	e, err := GetEvent(ed.EventId, GetEventQueryParam{}, requestUser)
 	if err != nil {
 		return err
 	}
@@ -30,5 +30,31 @@ func DeleteEventDocument(repo EventRepository, qs EventQueryService, id string, 
 		return ErrCannotDeleteEventDocument
 	}
 
-	return repo.DeleteDocument(id)
+	// MySQLサーバーに接続
+	db, err := OpenMysql()
+	if err != nil {
+		return err
+	}
+	// return時にMySQLサーバーとの接続を閉じる
+	defer db.Close()
+
+	// `id`が一致する行を`documents`テーブルから削除
+	r2, err := db.Exec(
+		`DELETE FROM documents WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+	var a int64
+	if a, err = r2.RowsAffected(); err != nil || a != 1 {
+		if err != nil {
+			return err
+		}
+		// `id`に一致する`document`が存在しない
+		err = ErrEventDocumentNotFound
+		return err
+	}
+
+	return nil
 }
