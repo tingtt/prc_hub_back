@@ -178,6 +178,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (_ Event,
 		}
 
 		// 新規データの追加
+		// TODO: for文にする
 		_, err = db.NamedExec(
 			fmt.Sprintf(
 				`INSERT INTO event_datetimes

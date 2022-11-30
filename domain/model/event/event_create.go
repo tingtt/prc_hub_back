@@ -82,6 +82,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (_ Event, err error)
 		})
 	}
 
+	// TODO: UUID -> LastInsertedId()
 	e := Event{
 		Id:          util.UUID(),
 		Name:        p.Name,

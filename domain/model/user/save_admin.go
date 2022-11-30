@@ -53,6 +53,7 @@ func SaveAdmin(email string, password string) error {
 		}
 
 		// `User`追加
+		// TODO: UUID -> LastInsertedId()
 		u := User{
 			Id:                  util.UUID(),
 			Name:                "admin",

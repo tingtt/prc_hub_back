@@ -52,6 +52,7 @@ func CreateUser(p CreateUserParam) (_ UserWithToken, err error) {
 		p.GithubUsername = nil
 	}
 
+	// TODO: UUID -> LastInsertedId()
 	u := User{
 		Id:                  util.UUID(),
 		Name:                p.Name,
