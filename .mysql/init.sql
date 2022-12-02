@@ -51,7 +51,6 @@ CREATE TABLE `event_datetimes` (
   `event_id` int(255) UNSIGNED NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
-  PRIMARY KEY (`event_id`, `start`),
   FOREIGN KEY (`event_id`) REFERENCES events(`id`) ON DELETE CASCADE
 );
 

@@ -49,7 +49,8 @@ func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret
 				c.Path() == "/events" && c.Request().Method == "GET" ||
 				c.Path() == "/events/:id" && c.Request().Method == "GET" ||
 				c.Path() == "/events/:id/documents" && c.Request().Method == "GET" ||
-				c.Path() == "/events/:id/documents/:document_id" && c.Request().Method == "GET"
+				c.Path() == "/events/:id/documents/:document_id" && c.Request().Method == "GET" ||
+				c.Path() == "/reset" && c.Request().Method == "POST"
 		},
 	)
 

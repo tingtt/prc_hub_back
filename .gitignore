@@ -15,3 +15,5 @@
 # vendor/
 
 .env
+
+.mysql/log/*.log

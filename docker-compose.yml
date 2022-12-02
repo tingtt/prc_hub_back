@@ -13,14 +13,14 @@ services:
     environment:
       TZ: ${TZ:-UTC}
       PORT: ${PORT:-1323}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-flow-users}
-      MYSQL_USER: ${MYSQL_USER:-flow-users}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-prc_hub}
+      MYSQL_USER: ${MYSQL_USER:-prc_hub}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       LOG_LEVEL: ${LOG_LEVEL:-2}
       GZIP_LEVEL: ${GZIP_LEVEL:-6}
       MYSQL_HOST: ${MYSQL_HOST:-mysql}
       MYSQL_PORT: ${MYSQL_PORT:-3306}
-      JWT_ISSUER: ${JWT_ISSUER:-flow-users}
+      JWT_ISSUER: ${JWT_ISSUER:-prc_hub}
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
@@ -38,6 +38,7 @@ services:
       - type: bind
         source: "./.mysql/my.cnf"
         target: "/etc/mysql/conf.d/my.cnf"
+      # - ./.mysql/log:/var/log/mysql
       - mysql_data:/var/lib/mysql
     ports:
       - 3306

@@ -43,6 +43,9 @@ type ServerInterface interface {
 	// イベント資料変更
 	// (PATCH /events/{id}/documents/{document_id})
 	PatchEventsIdDocumentsDocumentId(ctx echo.Context, id Id, documentId DocumentId) error
+	// migration
+	// (POST /reset)
+	PostReset(ctx echo.Context) error
 	// ユーザー削除
 	// (DELETE /users)
 	DeleteUsers(ctx echo.Context) error
@@ -315,6 +318,17 @@ func (w *ServerInterfaceWrapper) PatchEventsIdDocumentsDocumentId(ctx echo.Conte
 	return err
 }
 
+// PostReset converts echo context to params.
+func (w *ServerInterfaceWrapper) PostReset(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{""})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PostReset(ctx)
+	return err
+}
+
 // DeleteUsers converts echo context to params.
 func (w *ServerInterfaceWrapper) DeleteUsers(ctx echo.Context) error {
 	var err error
@@ -447,6 +461,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.DELETE(baseURL+"/events/:id/documents/:document_id", wrapper.DeleteEventsIdDocumentsDocumentId)
 	router.GET(baseURL+"/events/:id/documents/:document_id", wrapper.GetEventsIdDocumentsDocumentId)
 	router.PATCH(baseURL+"/events/:id/documents/:document_id", wrapper.PatchEventsIdDocumentsDocumentId)
+	router.POST(baseURL+"/reset", wrapper.PostReset)
 	router.DELETE(baseURL+"/users", wrapper.DeleteUsers)
 	router.GET(baseURL+"/users", wrapper.GetUsers)
 	router.POST(baseURL+"/users", wrapper.PostUsers)

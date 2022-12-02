@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"prc_hub_back/application/eisucon"
 	"prc_hub_back/application/event"
 	"prc_hub_back/application/user"
 	"prc_hub_back/domain/model/flag_with_env"
@@ -15,9 +16,9 @@ var (
 	logLevel      = flag_with_env.Uint("log-level", "LOG_LEVEL", 2, "Log level (1: 'DEBUG', 2: 'INFO', 3: 'WARN', 4: 'ERROR', 5: 'OFF', 6: 'PANIC', 7: 'FATAL'")
 	gzipLevel     = flag_with_env.Uint("gzip-level", "GZIP_LEVEL", 6, "Gzip compression level")
 	issuer        = flag_with_env.String("jwt-issuer", "JWT_ISSUER", "prc_hub-api", "JWT issuer")
-	secret        = flag_with_env.String("jwt-secret", "JWT_SECRET", "", "JWT secret")
-	adminEmail    = flag_with_env.String("admin-email", "ADMIN_EMAIL", "", "Admin user email")
-	adminPassword = flag_with_env.String("admin-password", "ADMIN_PASSWORD", "", "Admin user password")
+	secret        = flag_with_env.String("jwt-secret", "JWT_SECRET", "prc_hub", "JWT secret")
+	adminEmail    = flag_with_env.String("admin-email", "ADMIN_EMAIL", "admin@prc_hub.com", "Admin user email")
+	adminPassword = flag_with_env.String("admin-password", "ADMIN_PASSWORD", "prc_hub", "Admin user password")
 	allowOrigins  = flag_with_env.Array("allow-origin", "CORS allow origins")
 
 	mysqlHost     = flag_with_env.String("mysql-host", "MYSQL_HOST", "localhost", "")
@@ -25,6 +26,8 @@ var (
 	mysqlDB       = flag_with_env.String("mysql-db", "MYSQL_DATABASE", "prc_hub", "")
 	mysqlUser     = flag_with_env.String("mysql-user", "MYSQL_USER", "prc_hub", "")
 	mysqlPassword = flag_with_env.String("mysql-password", "MYSQL_PASSWORD", "", "")
+
+	eisuconMigrationFile = flag_with_env.String("migrate-sql-file", "MIGRETE_SQL_FILE", "./domain/model/eisucon/migrate.sql", "sql file for migrate with '/reset:POST'")
 )
 
 func main() {
@@ -50,6 +53,7 @@ func main() {
 	// Init application services
 	user.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
 	event.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
+	eisucon.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB, *eisuconMigrationFile)
 
 	// Migrate admin user
 	fmt.Printf("adminEmail: %v\n", *adminEmail)
