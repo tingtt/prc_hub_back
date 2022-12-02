@@ -5,6 +5,8 @@ import (
 	"prc_hub_back/domain/model/jwt"
 	"prc_hub_back/domain/model/util"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Errors
@@ -112,7 +114,12 @@ func Update(id int64, p UpdateUserParam, requestUser User) (UserWithToken, error
 	if p.Password != nil {
 		// `Password`を変更
 		query += " password = ?,"
-		queryParams = append(queryParams, *p.Password)
+		// パスワードをハッシュ化
+		hashed, err := bcrypt.GenerateFromPassword([]byte(*p.Password), 10)
+		if err != nil {
+			return UserWithToken{}, err
+		}
+		queryParams = append(queryParams, hashed)
 	}
 	if p.PostEventAvailabled != nil {
 		// `PostEventAvailabled`を変更
@@ -151,7 +158,7 @@ func Update(id int64, p UpdateUserParam, requestUser User) (UserWithToken, error
 	query = strings.TrimSuffix(query, ",")
 
 	// `users`テーブルの`id`が一致する行を更新
-	r2, err := d.Exec(query+" WHERE id = ?", append(queryParams, id))
+	r2, err := d.Exec(query+" WHERE id = ?", append(queryParams, id)...)
 	if err != nil {
 		return UserWithToken{}, err
 	}

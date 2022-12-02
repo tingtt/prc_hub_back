@@ -23,14 +23,8 @@ func SaveAdmin(email string, password string) error {
 			return err
 		} else if !verify {
 			// `Password`が不一致
-			// パスワードをハッシュ化
-			hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-			if err != nil {
-				return err
-			}
-			tmpPasswd := string(hashed)
 			// 新規パスワード
-			newPassword = &tmpPasswd
+			newPassword = &password
 		}
 
 		// `User`更新
