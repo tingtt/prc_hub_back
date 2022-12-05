@@ -31,6 +31,15 @@ CREATE TABLE `users` (
 );
 
 --
+-- Table structure for table `user_stars`
+--
+CREATE TABLE `user_stars` (
+  `id` int(255) UNSIGNED AUTO_INCREMENT NOT NULL,
+  `target_user_id` int(255) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+--
 -- Table structure for table `events`
 --
 CREATE TABLE `events` (

@@ -2,15 +2,15 @@ package user
 
 func Get(id int64) (User, error) {
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	db, err := OpenMysql()
 	if err != nil {
 		return User{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
-	defer d.Close()
+	defer db.Close()
 
 	// `users`テーブルから`id`が一致する行を取得し、変数`e`に代入する
-	r, err := d.Query("SELECT * FROM users WHERE id = ?", id)
+	r, err := db.Query("SELECT * FROM users WHERE id = ?", id)
 	if err != nil {
 		return User{}, err
 	}
@@ -42,31 +42,47 @@ func Get(id int64) (User, error) {
 		return User{}, err
 	}
 
+	// スター数を取得
+	var count uint64 = 0
+	r2, err := db.Query("SELECT COUNT(*) FROM user_stars WHERE target_user_id = ?", id)
+	if err != nil {
+		return User{}, err
+	}
+	defer r2.Close()
+	if !r2.Next() {
+		return User{}, ErrConflictUserStars
+	}
+	err = r2.Scan(&count)
+	if err != nil {
+		return User{}, err
+	}
+
 	u := User{
-		id,
-		name,
-		email,
-		password,
-		postEventAvailabled,
-		manage,
-		admin,
-		twitterId,
-		githubUsername,
+		Id:                  id,
+		Name:                name,
+		Email:               email,
+		Password:            password,
+		StarCount:           count,
+		PostEventAvailabled: postEventAvailabled,
+		Manage:              manage,
+		Admin:               admin,
+		TwitterId:           twitterId,
+		GithubUsername:      githubUsername,
 	}
 	return u, nil
 }
 
 func GetByEmail(email string) (User, error) {
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	db, err := OpenMysql()
 	if err != nil {
 		return User{}, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
-	defer d.Close()
+	defer db.Close()
 
 	// `users`テーブルから`id`が一致する行を取得し、変数`e`に代入する
-	r, err := d.Query(
+	r, err := db.Query(
 		"SELECT * FROM users WHERE email = ?",
 		email,
 	)
@@ -100,16 +116,32 @@ func GetByEmail(email string) (User, error) {
 		return User{}, err
 	}
 
+	// スター数を取得
+	var count uint64 = 0
+	r2, err := db.Query("SELECT COUNT(*) FROM user_stars WHERE target_user_id = ?", id)
+	if err != nil {
+		return User{}, err
+	}
+	defer r2.Close()
+	if !r2.Next() {
+		return User{}, ErrConflictUserStars
+	}
+	err = r2.Scan(&count)
+	if err != nil {
+		return User{}, err
+	}
+
 	u := User{
-		id,
-		name,
-		email,
-		password,
-		postEventAvailabled,
-		manage,
-		admin,
-		twitterId,
-		githubUsername,
+		Id:                  id,
+		Name:                name,
+		Email:               email,
+		Password:            password,
+		StarCount:           count,
+		PostEventAvailabled: postEventAvailabled,
+		Manage:              manage,
+		Admin:               admin,
+		TwitterId:           twitterId,
+		GithubUsername:      githubUsername,
 	}
 	return u, nil
 }

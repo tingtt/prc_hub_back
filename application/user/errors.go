@@ -23,6 +23,9 @@ var (
 	ErrValidateEmailCannotBeEmpty    = user.ErrValidateEmailCannotBeEmpty
 	ErrValidatePasswordCannotBeEmpty = user.ErrValidatePasswordCannotBeEmpty
 	ErrValidatePasswordLength        = user.ErrValidatePasswordLength
+
+	// 500
+	ErrConflictUserStars = user.ErrConflictUserStars
 )
 
 func ErrToCode(e error) (code int) {

@@ -6,26 +6,26 @@ import (
 )
 
 type Event struct {
-	Id          int64           `json:"id" db:"id"`
-	Name        string          `json:"name" db:"name"`
-	Description *string         `json:"description,omitempty" db:"description"`
-	Location    *string         `json:"location,omitempty" db:"location"`
-	Datetimes   []EventDatetime `json:"datetimes" db:"datetimes"`
-	Published   bool            `json:"published" db:"published"`
-	Completed   bool            `json:"completed" db:"completed"`
-	UserId      int64           `json:"user_id" db:"user_id"`
+	Id          int64           `json:"id"`
+	Name        string          `json:"name"`
+	Description *string         `json:"description,omitempty"`
+	Location    *string         `json:"location,omitempty"`
+	Datetimes   []EventDatetime `json:"datetimes"`
+	Published   bool            `json:"published"`
+	Completed   bool            `json:"completed"`
+	UserId      int64           `json:"user_id"`
 }
 
 type EventDatetime struct {
-	Start time.Time `json:"start" db:"start"`
+	Start time.Time `json:"start"`
 	End   time.Time `json:"end" dh:"end"`
 }
 
 type EventDocument struct {
-	EventId int64  `json:"event_id" db:"event_id"`
-	Id      int64  `json:"id" db:"id"`
-	Name    string `json:"name" db:"name"`
-	Url     string `json:"url" db:"url"`
+	EventId int64  `json:"event_id"`
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Url     string `json:"url"`
 }
 
 type EventEmbed struct {

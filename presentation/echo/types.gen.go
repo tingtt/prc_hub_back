@@ -115,6 +115,7 @@ type User struct {
 	Manage              bool                `json:"manage"`
 	Name                string              `json:"name"`
 	PostEventAvailabled bool                `json:"post_event_availabled"`
+	StarCount           *uint64             `json:"star_count,omitempty"`
 	TwitterId           *string             `json:"twitter_id,omitempty"`
 }
 

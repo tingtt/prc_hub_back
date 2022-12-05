@@ -77,6 +77,7 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 		Name:                p.Name,
 		Email:               p.Email,
 		Password:            string(hashed),
+		StarCount:           0,
 		PostEventAvailabled: false,
 		Manage:              false,
 		Admin:               false,

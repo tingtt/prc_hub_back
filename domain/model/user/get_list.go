@@ -1,6 +1,8 @@
 package user
 
-import "strings"
+import (
+	"strings"
+)
 
 type GetUserListQueryParam struct {
 	Name                *string `query:"name"`
@@ -12,12 +14,12 @@ type GetUserListQueryParam struct {
 
 func GetList(q GetUserListQueryParam) ([]User, error) {
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	db, err := OpenMysql()
 	if err != nil {
 		return nil, err
 	}
 	// return時にMySQLサーバーとの接続を閉じる
-	defer d.Close()
+	defer db.Close()
 
 	// クエリを作成
 	query := "SELECT * FROM users WHERE"
@@ -52,7 +54,7 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	query = strings.TrimSuffix(query, " AND")
 
 	// `users`テーブルからを取得
-	r, err := d.Query(query, queryParams...)
+	r, err := db.Query(query, queryParams...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,18 +84,35 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 			return nil, err
 		}
 
+		// スター数を取得
+		var count uint64 = 0
+		r2, err := db.Query("SELECT COUNT(*) FROM user_stars WHERE target_user_id = ?", id)
+		if err != nil {
+			return nil, err
+		}
+		if !r2.Next() {
+			return nil, ErrConflictUserStars
+		}
+		err = r2.Scan(&count)
+		if err != nil {
+			return nil, err
+		}
+		r2.Close()
+
 		// 配列に追加
 		users = append(
 			users,
-			User{id,
-				name,
-				email,
-				password,
-				postEventAvailabled,
-				manage,
-				admin,
-				twitterId,
-				githubUsername,
+			User{
+				Id:                  id,
+				Name:                name,
+				Email:               email,
+				Password:            password,
+				StarCount:           count,
+				PostEventAvailabled: postEventAvailabled,
+				Manage:              manage,
+				Admin:               admin,
+				TwitterId:           twitterId,
+				GithubUsername:      githubUsername,
 			},
 		)
 	}
