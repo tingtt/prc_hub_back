@@ -6,7 +6,8 @@ import (
 
 func SaveAdmin(email string, password string) error {
 	tmpBool := true
-	u, err := GetList(GetUserListQueryParam{Admin: &tmpBool})
+	tmpName := "admin"
+	u, err := GetList(GetUserListQueryParam{Admin: &tmpBool, Name: &tmpName})
 	if err != nil {
 		return err
 	}
