@@ -55,9 +55,16 @@ func main() {
 	event.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
 	eisucon.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB, *eisuconMigrationFile)
 
+	// Migrate seed data
+	err := eisucon.Migrate()
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return
+	}
+
 	// Migrate admin user
 	fmt.Printf("adminEmail: %v\n", *adminEmail)
-	err := user.SaveAdmin(*adminEmail, *adminPassword)
+	err = user.SaveAdmin(*adminEmail, *adminPassword)
 	if err != nil && err != user.ErrNoUpdates {
 		fmt.Printf("err: %v\n", err)
 		return
