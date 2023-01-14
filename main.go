@@ -12,14 +12,12 @@ import (
 
 // コマンドライン引数 / 環境変数
 var (
-	port          = flag_with_env.Uint("port", "PORT", 1323, "Server port")
-	logLevel      = flag_with_env.Uint("log-level", "LOG_LEVEL", 2, "Log level (1: 'DEBUG', 2: 'INFO', 3: 'WARN', 4: 'ERROR', 5: 'OFF', 6: 'PANIC', 7: 'FATAL'")
-	gzipLevel     = flag_with_env.Uint("gzip-level", "GZIP_LEVEL", 6, "Gzip compression level")
-	issuer        = flag_with_env.String("jwt-issuer", "JWT_ISSUER", "prc_hub-api", "JWT issuer")
-	secret        = flag_with_env.String("jwt-secret", "JWT_SECRET", "prc_hub", "JWT secret")
-	adminEmail    = flag_with_env.String("admin-email", "ADMIN_EMAIL", "admin@prc_hub.com", "Admin user email")
-	adminPassword = flag_with_env.String("admin-password", "ADMIN_PASSWORD", "prc_hub", "Admin user password")
-	allowOrigins  = flag_with_env.Array("allow-origin", "CORS allow origins")
+	port         = flag_with_env.Uint("port", "PORT", 1323, "Server port")
+	logLevel     = flag_with_env.Uint("log-level", "LOG_LEVEL", 2, "Log level (1: 'DEBUG', 2: 'INFO', 3: 'WARN', 4: 'ERROR', 5: 'OFF', 6: 'PANIC', 7: 'FATAL'")
+	gzipLevel    = flag_with_env.Uint("gzip-level", "GZIP_LEVEL", 6, "Gzip compression level")
+	issuer       = flag_with_env.String("jwt-issuer", "JWT_ISSUER", "prc_hub-api", "JWT issuer")
+	secret       = flag_with_env.String("jwt-secret", "JWT_SECRET", "prc_hub", "JWT secret")
+	allowOrigins = flag_with_env.Array("allow-origin", "CORS allow origins")
 
 	mysqlHost     = flag_with_env.String("mysql-host", "MYSQL_HOST", "localhost", "")
 	mysqlPort     = flag_with_env.Uint("mysql-port", "MYSQL_PORT", 3306, "")
@@ -41,14 +39,6 @@ func main() {
 		fmt.Println("`--jwt-secret` option is required")
 		os.Exit(1)
 	}
-	if *adminEmail == "" {
-		fmt.Println("`--admin-email` option is required")
-		os.Exit(1)
-	}
-	if *adminPassword == "" {
-		fmt.Println("`--admin-password` option is required")
-		os.Exit(1)
-	}
 
 	// Init application services
 	user.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
@@ -58,14 +48,6 @@ func main() {
 	// Migrate seed data
 	err := eisucon.Migrate()
 	if err != nil {
-		fmt.Printf("err: %v\n", err)
-		return
-	}
-
-	// Migrate admin user
-	fmt.Printf("adminEmail: %v\n", *adminEmail)
-	err = user.SaveAdmin(*adminEmail, *adminPassword)
-	if err != nil && err != user.ErrNoUpdates {
 		fmt.Printf("err: %v\n", err)
 		return
 	}
