@@ -8,7 +8,7 @@ import (
 )
 
 // (POST /users)
-func (s Server) PostUsers(ctx echo.Context) error {
+func (*Server) PostUsers(ctx echo.Context) error {
 	// Bind body
 	body := new(user.CreateUserParam)
 	if err := ctx.Bind(body); err != nil {

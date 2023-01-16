@@ -19,7 +19,7 @@ func (b LoginBody) Validate() error {
 }
 
 // (POST /users/sign_in)
-func (s Server) PostUsersSignIn(ctx echo.Context) error {
+func (*Server) PostUsersSignIn(ctx echo.Context) error {
 	// Bind body
 	body := new(PostUsersSignInJSONRequestBody)
 	if err := ctx.Bind(body); err != nil {

@@ -7,7 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (s Server) PostReset(ctx echo.Context) error {
+// (POST /reset)
+func (*Server) PostReset(ctx echo.Context) error {
 	err := eisucon.Migrate()
 	if err != nil {
 		return JSONMessage(ctx, http.StatusInternalServerError, err.Error())

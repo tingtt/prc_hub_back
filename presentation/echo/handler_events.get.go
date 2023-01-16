@@ -9,7 +9,7 @@ import (
 )
 
 // (GET /events)
-func (s Server) GetEvents(ctx echo.Context, params GetEventsParams) error {
+func (*Server) GetEvents(ctx echo.Context) error {
 	// Get jwt claim
 	var jwtId *int64
 	jcc, err := jwt.Check(ctx)

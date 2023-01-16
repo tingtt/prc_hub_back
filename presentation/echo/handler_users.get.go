@@ -9,7 +9,7 @@ import (
 )
 
 // (GET /users)
-func (s Server) GetUsers(ctx echo.Context) error {
+func (*Server) GetUsers(ctx echo.Context) error {
 	// Get jwt claim
 	_, err := jwt.CheckProvided(ctx)
 	if err != nil {

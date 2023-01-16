@@ -9,7 +9,7 @@ import (
 )
 
 // (POST /events)
-func (s Server) PostEvents(ctx echo.Context) error {
+func (*Server) PostEvents(ctx echo.Context) error {
 	// Get jwt claim
 	jcc, err := jwt.CheckProvided(ctx)
 	if err != nil {

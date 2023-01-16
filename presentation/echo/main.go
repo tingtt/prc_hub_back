@@ -56,7 +56,30 @@ func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret
 	)
 
 	// handlerの登録
-	RegisterHandlers(e, Server{})
+	var server *Server
+
+	// ↓ スコア測定に直接関係するエンドポイント
+	e.GET("/events", server.GetEvents)
+	e.POST("/events", server.PostEvents)
+	e.GET("/events/:id", server.GetEventsId)
+	e.GET("/events/:id/documents", server.GetEventsIdDocuments)
+	e.POST("/events/:id/documents", server.PostEventsIdDocuments)
+	e.GET("/events/:id/documents/:document_id", server.GetEventsIdDocumentsDocumentId)
+	e.POST("/reset", server.PostReset)
+	e.GET("/users", server.GetUsers)
+	e.POST("/users/sign_in", server.PostUsersSignIn)
+	e.GET("/users/:id", server.GetUsersId)
+	e.POST("/users/:id/star", server.PostUsersIdStar)
+
+	// ↓ スコアに直接関係しないため他部分の変更による影響がない場合は原則変更しなくて構わない
+	e.DELETE("/events/:id", server.DeleteEventsId)
+	e.PATCH("/events/:id", server.PatchEventsId)
+	e.DELETE("/events/:id/documents/:document_id", server.DeleteEventsIdDocumentsDocumentId)
+	e.PATCH("/events/:id/documents/:document_id", server.PatchEventsIdDocumentsDocumentId)
+	e.DELETE("/users", server.DeleteUsers)
+	e.POST("/users", server.PostUsers)
+	e.DELETE("/users/:id", server.DeleteUsersId)
+	e.PATCH("/users/:id", server.PatchUsersId)
 
 	// echoサーバーの起動
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))

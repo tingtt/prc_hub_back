@@ -9,7 +9,7 @@ import (
 )
 
 // (DELETE /users)
-func (s Server) DeleteUsers(ctx echo.Context) error {
+func (*Server) DeleteUsers(ctx echo.Context) error {
 	// Get jwt claim
 	jcc, err := jwt.CheckProvided(ctx)
 	if err != nil {
