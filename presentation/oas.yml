@@ -460,8 +460,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
         name:
           type: string
           example: prc_hub_user
@@ -514,8 +513,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
         name:
           type: string
           example: prc_hub_user
@@ -610,8 +608,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
         name:
           type: string
           example: ITシステムの構造
@@ -746,8 +743,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
         name:
           type: string
           example: スライド
@@ -828,16 +824,13 @@ components:
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
-        example: 1
+        type: string
     document_id:
       name: document_id
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
+        type: string
         example: 1
     name:
       name: name
