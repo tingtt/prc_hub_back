@@ -3,23 +3,15 @@ package echo
 import (
 	"fmt"
 	"prc_hub_back/domain/model/jwt"
+	"prc_hub_back/domain/model/logger"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 )
 
-func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret string, allowOrigins []string) {
+func Start(port uint, jwtIssuer string, jwtSecret string, allowOrigins []string) {
 	// echoサーバーのインスタンス生成
 	e := echo.New()
-
-	// Gzipの圧縮レベル設定
-	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
-		Level: int(gzipLevel),
-	}))
-
-	// ログレベルの設定
-	e.Logger.SetLevel(log.Lvl(logLevel))
 
 	// CORS
 	if allowOrigins != nil {
@@ -32,8 +24,8 @@ func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret
 				echo.HeaderAuthorization,
 			},
 		}))
-		e.Logger.Info("CORS enabled")
-		e.Logger.Debugf("CORS allow origins: %v", allowOrigins)
+		logger.Logger().Info("cors enabled")
+		logger.Logger().Debugf("cors allow origins: %v", allowOrigins)
 	}
 
 	// JWT
@@ -82,5 +74,5 @@ func Start(port uint, logLevel uint, gzipLevel uint, jwtIssuer string, jwtSecret
 	e.PATCH("/users/:id", server.PatchUsersId)
 
 	// echoサーバーの起動
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
+	logger.Logger().Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }

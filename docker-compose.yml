@@ -16,12 +16,6 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-prc_hub}
       MYSQL_USER: ${MYSQL_USER:-prc_hub}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      LOG_LEVEL: ${LOG_LEVEL:-2}
-      GZIP_LEVEL: ${GZIP_LEVEL:-6}
-      MYSQL_HOST: ${MYSQL_HOST:-mysql}
-      MYSQL_PORT: ${MYSQL_PORT:-3306}
-      JWT_ISSUER: ${JWT_ISSUER:-prc_hub}
-      JWT_SECRET: ${JWT_SECRET}
     command: ${ARGS:-}
     depends_on:
       - mysql
