@@ -18,7 +18,7 @@ import (
 
 // flags (コマンドライン引数)
 var (
-	port = pflag.Uint("port", 1324, "publish port")
+	port = pflag.Uint("port", 1323, "publish port")
 
 	logLevel     = pflag.String("log.level", "info", "Only log messages with the given severity or above. One of: [panic, fatal, error, warn, info, debug, trace]")
 	logTimestamp = pflag.Bool("log.timestamp", false, "Enable log timestamp.")
